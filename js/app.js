@@ -42,6 +42,20 @@ class AppRouter {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // Switch sound tracks based on screen:
+        // Horse game -> upbeat arcade music
+        // Poker -> spy mystery jazz
+        // Other screens (Welcome, Safe, Finale) -> Happy Birthday to You
+        if (window.soundController) {
+            if (screenId === 'screen-horse-game') {
+                window.soundController.playTrack('runner');
+            } else if (screenId === 'screen-poker-game') {
+                window.soundController.playTrack('poker');
+            } else {
+                window.soundController.playTrack('birthday');
+            }
+        }
+
         // Initialize screen-specific modules
         if (screenId === 'screen-horse-game') {
             this.initRunnerScreen();
@@ -53,6 +67,9 @@ class AppRouter {
     }
 
     initRunnerScreen() {
+        if (window.soundController) {
+            window.soundController.playGameStart();
+        }
         if (!this.runnerInstance) {
             this.runnerInstance = new window.HorseRunnerGame('runner-canvas', {
                 onFinish: () => {
@@ -85,17 +102,49 @@ class AppRouter {
         const startQuestBtn = document.getElementById('btn-start-quest');
         if (startQuestBtn) {
             startQuestBtn.addEventListener('click', () => {
+                if (window.soundController) {
+                    window.soundController.handleUserGesture();
+                }
                 this.showScreen('screen-horse-game');
             });
         }
 
-        // Audio toggle button
+        // Welcome screen direct music trigger button
+        const musicWelcomeBtn = document.getElementById('btn-music-pill-welcome');
+        const musicWelcomeText = document.getElementById('music-welcome-text');
+        if (musicWelcomeBtn) {
+            musicWelcomeBtn.addEventListener('click', () => {
+                if (window.soundController) {
+                    window.soundController.handleUserGesture();
+                    window.soundController.playTrack('birthday');
+                    if (musicWelcomeText) {
+                        musicWelcomeText.textContent = '🎶 Грає святкова мелодія! ✨';
+                    }
+                    musicWelcomeBtn.classList.add('playing');
+                }
+            });
+        }
+
+        // Runner Retry button (Modal)
+        const runnerRetryBtn = document.getElementById('btn-runner-retry');
+        if (runnerRetryBtn) {
+            runnerRetryBtn.addEventListener('click', () => {
+                const modal = document.getElementById('runner-retry-modal');
+                if (modal) modal.classList.remove('active');
+                if (this.runnerInstance) {
+                    this.runnerInstance.start();
+                }
+            });
+        }
+
+        // Audio toggle button in header
         const soundToggleBtn = document.getElementById('btn-sound-toggle');
         const soundIcon = document.getElementById('sound-icon');
         const soundLabel = document.getElementById('sound-label');
         if (soundToggleBtn) {
             soundToggleBtn.addEventListener('click', () => {
                 if (window.soundController) {
+                    window.soundController.handleUserGesture();
                     const isEnabled = window.soundController.toggleMute();
                     if (soundIcon) soundIcon.textContent = isEnabled ? '🎵' : '🔇';
                     if (soundLabel) soundLabel.textContent = isEnabled ? 'Музика: Увімкн.' : 'Без звуку';

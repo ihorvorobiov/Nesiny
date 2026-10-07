@@ -198,6 +198,7 @@ class HorseRunnerGame {
         this.horse.vy = 0;
         this.horse.isJumping = false;
         this.horse.isLayingDown = false;
+        this.horse.isVictorious = false;
         this.horse.stumbleTimer = 0;
         this.horse.invulnerableTimer = 0;
         this.horse.jumpBufferTimer = 0;
@@ -460,18 +461,21 @@ class HorseRunnerGame {
 
     finishRun() {
         this.isFinished = true;
-        this.horse.isLayingDown = true;
+        this.horse.isVictorious = true;
+        this.horse.isLayingDown = false;
+        this.horse.vy = 0;
+        this.horse.y = this.groundY;
         this.speed = 0;
-        this.spawnSparkles(this.horse.x + 25, this.horse.y + 10, 24);
+        this.spawnSparkles(this.horse.x + 25, this.horse.y + 10, 36);
 
         if (window.soundController) {
-            window.soundController.playSafeUnlock();
+            window.soundController.playVictory();
         }
 
         setTimeout(() => {
             this.stop();
             this.onFinish();
-        }, 2200);
+        }, 2500);
     }
 
     draw() {
@@ -570,6 +574,94 @@ class HorseRunnerGame {
             ctx.fill();
         });
 
+        // 11. Draw in-game HUD (horseshoe count and timer directly on top of canvas)
+        this.drawHUD(ctx);
+
+        ctx.restore();
+    }
+
+    drawHUD(ctx) {
+        ctx.save();
+
+        // Top-Left Badge: Horseshoes 🧲 X / 3
+        const badgeX = 12;
+        const badgeY = 12;
+        const badgeW = 96;
+        const badgeH = 32;
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.94)';
+        ctx.strokeStyle = this.collectedHorseshoes >= 3 ? '#10B981' : '#F59E0B';
+        ctx.lineWidth = 2.5;
+
+        if (ctx.roundRect) {
+            ctx.beginPath();
+            ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 16);
+            ctx.fill();
+            ctx.stroke();
+        } else {
+            ctx.fillRect(badgeX, badgeY, badgeW, badgeH);
+            ctx.strokeRect(badgeX, badgeY, badgeW, badgeH);
+        }
+
+        ctx.font = '16px sans-serif';
+        ctx.fillText('🧲', badgeX + 7, badgeY + 22);
+
+        ctx.fillStyle = this.collectedHorseshoes >= 3 ? '#065F46' : '#92400E';
+        ctx.font = 'bold 15px system-ui, -apple-system, sans-serif';
+        ctx.fillText(`${this.collectedHorseshoes} / ${this.targetHorseshoes}`, badgeX + 32, badgeY + 22);
+
+        // Top-Right Badge: Timer ⏱️ Xs
+        const remaining = Math.max(0, Math.ceil(this.targetDuration - this.elapsedTime));
+        const timeBadgeW = 76;
+        const timeBadgeX = this.width - timeBadgeW - 12;
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.94)';
+        ctx.strokeStyle = '#94A3B8';
+        ctx.lineWidth = 2;
+
+        if (ctx.roundRect) {
+            ctx.beginPath();
+            ctx.roundRect(timeBadgeX, badgeY, timeBadgeW, badgeH, 16);
+            ctx.fill();
+            ctx.stroke();
+        } else {
+            ctx.fillRect(timeBadgeX, badgeY, timeBadgeW, badgeH);
+            ctx.strokeRect(timeBadgeX, badgeY, timeBadgeW, badgeH);
+        }
+
+        ctx.font = '15px sans-serif';
+        ctx.fillText('⏱️', timeBadgeX + 6, badgeY + 22);
+
+        ctx.fillStyle = '#475569';
+        ctx.font = 'bold 14px system-ui, -apple-system, sans-serif';
+        ctx.fillText(`${remaining}s`, timeBadgeX + 28, badgeY + 22);
+
+        // Center goal notice banner if all 3 horseshoes collected
+        if (this.collectedHorseshoes >= this.targetHorseshoes) {
+            const bannerW = 200;
+            const bannerX = (this.width - bannerW) / 2;
+            const bannerY = 14;
+
+            ctx.fillStyle = 'rgba(16, 185, 129, 0.95)';
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.lineWidth = 2;
+
+            if (ctx.roundRect) {
+                ctx.beginPath();
+                ctx.roundRect(bannerX, bannerY, bannerW, 28, 14);
+                ctx.fill();
+                ctx.stroke();
+            } else {
+                ctx.fillRect(bannerX, bannerY, bannerW, 28);
+            }
+
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 12px system-ui, -apple-system, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('✨ 3/3 зібрано! До фінішу! 🏁', this.width / 2, bannerY + 18);
+            ctx.textAlign = 'left';
+        }
+
         ctx.restore();
     }
 
@@ -585,43 +677,102 @@ class HorseRunnerGame {
             ctx.fill();
         }
 
-        if (this.horse.isLayingDown) {
-            ctx.translate(0, 18);
+        if (this.horse.isVictorious) {
+            // Standing proud, joyful champion horse!
+            ctx.translate(0, 0);
+
+            // 4 straight sturdy legs
+            ctx.strokeStyle = '#92400E';
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(8, 6); ctx.lineTo(8, 24);
+            ctx.moveTo(14, 6); ctx.lineTo(14, 24);
+            ctx.moveTo(26, 6); ctx.lineTo(26, 24);
+            ctx.moveTo(32, 6); ctx.lineTo(32, 24);
+            ctx.stroke();
 
             // Body
             ctx.fillStyle = '#B45309';
             ctx.beginPath();
-            ctx.ellipse(20, 0, 24, 14, 0, 0, Math.PI * 2);
+            ctx.roundRect ? ctx.roundRect(4, -8, 32, 18, 9) : ctx.ellipse(20, 0, 16, 9, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Head resting
+            // Tail waving proudly
+            ctx.strokeStyle = '#FBBF24';
+            ctx.lineWidth = 4;
             ctx.beginPath();
-            ctx.arc(36, -4, 11, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Closed eye (smile arc)
-            ctx.strokeStyle = '#451A03';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(38, -5, 4, 0.2, Math.PI - 0.2);
+            ctx.moveTo(4, -2);
+            ctx.quadraticCurveTo(-10, -8, -6, 4);
             ctx.stroke();
 
-            // Party cone hat
-            ctx.fillStyle = '#EC4899';
+            // Neck & Head held high
+            ctx.fillStyle = '#B45309';
             ctx.beginPath();
-            ctx.moveTo(34, -14);
-            ctx.lineTo(44, -14);
-            ctx.lineTo(39, -28);
+            ctx.moveTo(26, -4);
+            ctx.lineTo(36, -20);
+            ctx.lineTo(46, -14);
+            ctx.lineTo(34, 4);
             ctx.closePath();
             ctx.fill();
 
-            // Floating ZZZ
-            const zOff = (this.horse.sleepTimer * 16) % 22;
+            // Muzzle smiling
+            ctx.beginPath();
+            ctx.arc(43, -13, 7, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Mane (Golden yellow)
+            ctx.fillStyle = '#FBBF24';
+            ctx.beginPath();
+            ctx.arc(31, -16, 5, 0, Math.PI * 2);
+            ctx.arc(27, -10, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Big happy eye
+            ctx.fillStyle = '#FFFFFF';
+            ctx.beginPath();
+            ctx.arc(39, -15, 3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#000000';
+            ctx.beginPath();
+            ctx.arc(39.5, -15, 1.6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Big celebratory party cone hat with sparkles
+            ctx.fillStyle = '#EC4899';
+            ctx.beginPath();
+            ctx.moveTo(33, -24);
+            ctx.lineTo(41, -22);
+            ctx.lineTo(37, -38);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = '#FBBF24';
+            ctx.beginPath();
+            ctx.arc(37, -39, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Winner gold medal ribbon around neck
+            ctx.fillStyle = '#EF4444';
+            ctx.beginPath();
+            ctx.arc(34, -2, 5, 0, Math.PI * 2);
+            ctx.fill();
             ctx.fillStyle = '#F59E0B';
-            ctx.font = 'bold 15px sans-serif';
-            ctx.fillText('z', 48, -12 - zOff * 0.5);
-            ctx.font = 'bold 18px sans-serif';
-            ctx.fillText('Z', 54, -20 - zOff);
+            ctx.beginPath();
+            ctx.arc(34, -2, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Speech bubble: "Ура! 🏆"
+            ctx.fillStyle = '#FFFFFF';
+            ctx.beginPath();
+            ctx.roundRect ? ctx.roundRect(14, -56, 62, 22, 8) : ctx.rect(14, -56, 62, 22);
+            ctx.fill();
+            ctx.strokeStyle = '#F59E0B';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            ctx.fillStyle = '#92400E';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillText('Ура! 🏆✨', 20, -41);
         } else {
             const jumpTilt = this.horse.isJumping ? (this.horse.vy * 0.035) : 0;
             ctx.rotate(jumpTilt);
