@@ -91,17 +91,20 @@ class AppRouter {
 
         // Audio toggle button
         const soundToggleBtn = document.getElementById('btn-sound-toggle');
+        const soundIcon = document.getElementById('sound-icon');
+        const soundLabel = document.getElementById('sound-label');
         if (soundToggleBtn) {
             soundToggleBtn.addEventListener('click', () => {
                 if (window.soundController) {
-                    const isEnabled = window.soundController.toggle();
-                    soundToggleBtn.textContent = isEnabled ? '🔊' : '🔇';
-                    soundToggleBtn.setAttribute('title', isEnabled ? 'Звук увімкнено' : 'Звук вимкнено');
+                    const isEnabled = window.soundController.toggleMute();
+                    if (soundIcon) soundIcon.textContent = isEnabled ? '🎵' : '🔇';
+                    if (soundLabel) soundLabel.textContent = isEnabled ? 'Музика: Увімкн.' : 'Без звуку';
+                    soundToggleBtn.classList.toggle('muted', !isEnabled);
                 }
             });
         }
 
-        // Copy Husband Link button on Safe screen
+        // Copy Dima Link button on Safe screen
         const copyHusbandLinkBtn = document.getElementById('btn-copy-husband-link');
         const copyLinkMainBtn = document.getElementById('btn-copy-link-main');
         const copyHusbandAction = () => {
@@ -123,22 +126,6 @@ class AppRouter {
         }
         if (copyLinkMainBtn) {
             copyLinkMainBtn.addEventListener('click', copyHusbandAction);
-        }
-
-        // Quick role switchers for testing/seamless navigation in footer
-        const switchSisterBtn = document.getElementById('link-switch-sister');
-        const switchHusbandBtn = document.getElementById('link-switch-husband');
-        if (switchSisterBtn) {
-            switchSisterBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.showScreen('screen-sister-welcome');
-            });
-        }
-        if (switchHusbandBtn) {
-            switchHusbandBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.showScreen('screen-poker-game');
-            });
         }
     }
 
@@ -317,34 +304,7 @@ class AppRouter {
     }
 
     bindFinalScreenActions() {
-        const copyCertBtn = document.getElementById('btn-copy-certificate-code');
-        const certCodeEl = document.getElementById('certificate-code-text');
-        const bookBtn = document.getElementById('btn-book-relax');
-        const bookingModal = document.getElementById('booking-modal');
-        const closeBookingBtn = document.getElementById('btn-close-booking-modal');
-
-        if (copyCertBtn && certCodeEl) {
-            copyCertBtn.addEventListener('click', () => {
-                const code = certCodeEl.textContent.trim();
-                navigator.clipboard.writeText(code).then(() => {
-                    this.showToast('✨ Код сертифіката скопійовано! 🧖');
-                }).catch(() => {
-                    this.showToast(`Код: ${code}`);
-                });
-            });
-        }
-
-        if (bookBtn && bookingModal) {
-            bookBtn.addEventListener('click', () => {
-                bookingModal.classList.add('active');
-            });
-        }
-
-        if (closeBookingBtn && bookingModal) {
-            closeBookingBtn.addEventListener('click', () => {
-                bookingModal.classList.remove('active');
-            });
-        }
+        // No extra actions needed on final screen — pure heartfelt celebration
     }
 
     showToast(message, duration = 3200) {
