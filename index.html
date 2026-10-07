@@ -127,13 +127,64 @@
         <!-- SCREEN 3: Safe Multi-Access Lock (#screen-safe-lock) -->
         <section id="screen-safe-lock" class="app-screen">
             <div class="card glass-card safe-card" id="safe-container">
-                <!-- Safe Visual Graphic (Vault dial, no duplicate lock icon) -->
-                <div class="safe-visual">
-                    <div class="safe-body">
-                        <div class="safe-door">
-                            <div class="safe-dial-wheel">
-                                <div class="safe-dial-spokes"></div>
-                                <div class="safe-dial-knob"></div>
+                <!-- Realistic Steel Bank Vault -->
+                <div class="realistic-vault-wrapper">
+                    <!-- Left Heavy Steel Hinges -->
+                    <div class="vault-hinge hinge-top"></div>
+                    <div class="vault-hinge hinge-bottom"></div>
+
+                    <!-- Main Heavy Vault Body -->
+                    <div class="vault-body">
+                        <!-- Corner Heavy Rivets/Bolts -->
+                        <div class="vault-bolt bolt-tl"></div>
+                        <div class="vault-bolt bolt-tr"></div>
+                        <div class="vault-bolt bolt-bl"></div>
+                        <div class="vault-bolt bolt-br"></div>
+
+                        <!-- Retractable Locking Bolts -->
+                        <div class="locking-bolt bolt-top"></div>
+                        <div class="locking-bolt bolt-right-1"></div>
+                        <div class="locking-bolt bolt-right-2"></div>
+                        <div class="locking-bolt bolt-bottom"></div>
+
+                        <!-- Interior Golden Glow (revealed upon unlock) -->
+                        <div class="vault-interior-glow">
+                            <span class="interior-prize-emoji">✨ 🎁 ✨</span>
+                        </div>
+
+                        <!-- The Heavy Steel Vault Door -->
+                        <div class="vault-door" id="vault-door-element">
+                            <div class="vault-door-bezel">
+                                <!-- Top Vault Brand Plate -->
+                                <div class="vault-plate">
+                                    <span class="plate-brand">TITANIUM VAULT • 0810</span>
+                                    <div class="vault-status-led" id="vault-led"></div>
+                                </div>
+
+                                <!-- Massive 4-Spoke Wheel -->
+                                <div class="vault-wheel-container">
+                                    <div class="vault-wheel" id="vault-wheel-element">
+                                        <div class="wheel-spoke spoke-1"></div>
+                                        <div class="wheel-spoke spoke-2"></div>
+                                        <div class="wheel-hub">
+                                            <span class="hub-lock-icon" id="hub-lock-icon">🔒</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Digital Keypad Panel mounted directly on door -->
+                                <div class="vault-digital-display">
+                                    <div class="digital-screen-header">
+                                        <span class="screen-label">SECURITY PROTOCOL PIN:</span>
+                                    </div>
+                                    <div class="pin-boxes-row">
+                                        <input type="tel" maxlength="1" class="pin-input" data-index="0" inputmode="numeric" autocomplete="one-time-code" autofocus>
+                                        <input type="tel" maxlength="1" class="pin-input" data-index="1" inputmode="numeric">
+                                        <input type="tel" maxlength="1" class="pin-input" data-index="2" inputmode="numeric">
+                                        <input type="tel" maxlength="1" class="pin-input" data-index="3" inputmode="numeric">
+                                    </div>
+                                    <p id="safe-error-msg" class="safe-error-text" style="display: none;"></p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -151,18 +202,6 @@
                     <p class="security-subdesc">
                         Другу частину шифру надіслано йому за стіл високих ставок. Передай йому естафету!
                     </p>
-                </div>
-
-                <!-- 4-digit PIN Code Input -->
-                <div class="pin-entry-container">
-                    <label class="pin-label">Введи 4-значний код деблокування:</label>
-                    <div class="pin-boxes-row">
-                        <input type="tel" maxlength="1" class="pin-input" data-index="0" inputmode="numeric" autocomplete="one-time-code" autofocus>
-                        <input type="tel" maxlength="1" class="pin-input" data-index="1" inputmode="numeric">
-                        <input type="tel" maxlength="1" class="pin-input" data-index="2" inputmode="numeric">
-                        <input type="tel" maxlength="1" class="pin-input" data-index="3" inputmode="numeric">
-                    </div>
-                    <p id="safe-error-msg" class="safe-error-text" style="display: none;"></p>
                 </div>
 
                 <!-- Action Buttons: Copy link & Share in Telegram -->
@@ -268,7 +307,24 @@
             <div class="card glass-card final-card">
                 <div class="final-hero-badge">🥂 ✨ 💖 ✨ 🥂</div>
 
-                <!-- Luxury SPA Voucher Card with Promocode (Prominently at the top!) -->
+                <!-- Heartfelt Birthday Wish Text (First!) -->
+                <div class="final-wish-card">
+                    <p class="final-wish-text primary-wish">
+                        З днем народження, дорога сестричка! Бажаємо тобі безмежного щастя, душевного тепла та легкості в кожному дні.
+                    </p>
+                    <div class="final-divider"></div>
+                    <p class="final-wish-text secondary-wish">
+                        Найкращий подарунок для іменинниці — це відпочинок, а найкраща компанія для цього — коханий чоловік, у якого якраз залежався святковий настрій ще з серпня. Ви пройшли цей маленький квест разом, а тепер час зупинити світ і провести годинку в атмосфері тотального спокою та турботи. Любимо вас!
+                    </p>
+                </div>
+
+                <!-- Gift Reveal Intro Badge -->
+                <div class="final-gift-reveal-intro">
+                    <span class="gift-reveal-arrow">🎁</span>
+                    <span class="gift-reveal-heading">Ваш спільний святковий трофей:</span>
+                </div>
+
+                <!-- Luxury SPA Voucher Card with Promocode (Second!) -->
                 <div class="luxury-voucher-card">
                     <div class="voucher-shimmer"></div>
                     <div class="voucher-inner">
@@ -282,7 +338,7 @@
                         </h2>
 
                         <div class="certificate-box">
-                            <span class="cert-label">ТВІЙ ПРОМОКОД ДЛЯ СПА:</span>
+                            <span class="cert-label">ПРОМОКОД ДЛЯ СПА:</span>
                             <div class="cert-code-wrapper">
                                 <span id="certificate-code-text" class="cert-code-value">SPA-RELAX-ALYA-DIMA-2024</span>
                             </div>
@@ -297,17 +353,6 @@
                             </button>
                         </div>
                     </div>
-                </div>
-
-                <!-- Heartfelt Birthday Wish Text -->
-                <div class="final-wish-card">
-                    <p class="final-wish-text primary-wish">
-                        З днем народження, дорога сестричка! Бажаємо тобі безмежного щастя, душевного тепла та легкості в кожному дні.
-                    </p>
-                    <div class="final-divider"></div>
-                    <p class="final-wish-text secondary-wish">
-                        Найкращий подарунок для іменинниці — це відпочинок, а найкраща компанія для цього — коханий чоловік, у якого якраз залежався святковий настрій ще з серпня. Ви пройшли цей маленький квест разом, а тепер час зупинити світ і провести годинку в атмосфері тотального спокою та турботи. Любимо вас!
-                    </p>
                 </div>
             </div>
 

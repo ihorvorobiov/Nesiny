@@ -32,9 +32,6 @@ class SoundController {
         ['click', 'touchstart', 'touchend', 'pointerdown', 'mousedown', 'keydown'].forEach(evt => {
             window.addEventListener(evt, this.handleUserGesture, { passive: true });
         });
-
-        // Try pre-initializing immediately
-        this.ensureContext();
     }
 
     ensureContext() {
@@ -59,6 +56,7 @@ class SoundController {
             }
         }
 
+        // Direct synchronous resume call essential for WebKit / Safari
         if (this.ctx && this.ctx.state === 'suspended') {
             this.ctx.resume().catch(() => {});
         }
@@ -74,25 +72,24 @@ class SoundController {
         }
     }
 
-    async handleUserGesture() {
+    handleUserGesture() {
         this.ensureContext();
         if (!this.ctx) return;
 
+        // Synchronous resume for iOS WebKit transient activation
         if (this.ctx.state === 'suspended') {
-            try {
-                await this.ctx.resume();
-            } catch (e) {}
+            this.ctx.resume().catch(() => {});
         }
 
         if (!this.isUnlocked) {
             try {
-                // iOS WebKit silent ping
+                // iOS WebKit silent oscillator ping
                 const osc = this.ctx.createOscillator();
                 const g = this.ctx.createGain();
                 g.gain.setValueAtTime(0.0001, this.ctx.currentTime);
                 osc.connect(g);
                 g.connect(this.ctx.destination);
-                osc.start();
+                osc.start(0);
                 osc.stop(this.ctx.currentTime + 0.01);
                 this.isUnlocked = true;
             } catch (e) {}
@@ -700,6 +697,10 @@ class SoundController {
             osc.start(now);
             osc.stop(now + 0.08);
         } catch (e) {}
+    }
+
+    playCardFlip() {
+        this.playDealCard();
     }
 
     playChips() {

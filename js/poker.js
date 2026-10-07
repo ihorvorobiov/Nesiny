@@ -59,6 +59,21 @@ class PokerGame {
         `;
     }
 
+    safePlaySound(name) {
+        if (!window.soundController) return;
+        try {
+            if (name === 'playCardFlip') {
+                if (typeof window.soundController.playCardFlip === 'function') {
+                    window.soundController.playCardFlip();
+                } else if (typeof window.soundController.playDealCard === 'function') {
+                    window.soundController.playDealCard();
+                }
+            } else if (typeof window.soundController[name] === 'function') {
+                window.soundController[name]();
+            }
+        } catch (e) {}
+    }
+
     init() {
         this.currentStep = 0;
         if (this.resultModalEl) {
@@ -69,9 +84,7 @@ class PokerGame {
         }
 
         // Initial chips sound
-        if (window.soundController) {
-            window.soundController.playChips();
-        }
+        this.safePlaySound('playChips');
 
         this.showPreflop();
     }
@@ -108,24 +121,23 @@ class PokerGame {
                     Дивитися Флоп (Call) 👁️
                 </button>
             `;
-            document.getElementById('btn-poker-flop').addEventListener('click', () => {
-                this.showFlop();
-            });
+            const flopBtn = document.getElementById('btn-poker-flop');
+            if (flopBtn) {
+                flopBtn.addEventListener('click', () => {
+                    this.showFlop();
+                });
+            }
         }
 
-        if (window.soundController) {
-            window.soundController.playCardFlip();
-        }
+        this.safePlaySound('playCardFlip');
     }
 
     showFlop() {
         this.currentStep = 1;
         if (this.potValueEl) this.potValueEl.textContent = '8,500 🟡';
 
-        if (window.soundController) {
-            window.soundController.playCardFlip();
-            setTimeout(() => window.soundController.playChips(), 150);
-        }
+        this.safePlaySound('playCardFlip');
+        setTimeout(() => this.safePlaySound('playChips'), 150);
 
         this.communityCardsEl.innerHTML = `
             ${this.renderCardHTML(this.flopCards[0])}
@@ -148,9 +160,12 @@ class PokerGame {
                     Дивитися Тьорн 🃏
                 </button>
             `;
-            document.getElementById('btn-poker-turn').addEventListener('click', () => {
-                this.showTurn();
-            });
+            const turnBtn = document.getElementById('btn-poker-turn');
+            if (turnBtn) {
+                turnBtn.addEventListener('click', () => {
+                    this.showTurn();
+                });
+            }
         }
     }
 
@@ -158,10 +173,8 @@ class PokerGame {
         this.currentStep = 2;
         if (this.potValueEl) this.potValueEl.textContent = '25,000 🟡';
 
-        if (window.soundController) {
-            window.soundController.playCardFlip();
-            setTimeout(() => window.soundController.playChips(), 120);
-        }
+        this.safePlaySound('playCardFlip');
+        setTimeout(() => this.safePlaySound('playChips'), 120);
 
         this.communityCardsEl.innerHTML = `
             ${this.renderCardHTML(this.flopCards[0])}
@@ -184,9 +197,12 @@ class PokerGame {
                     ALL-IN на Рівері 💥
                 </button>
             `;
-            document.getElementById('btn-poker-allin').addEventListener('click', () => {
-                this.showRiverAndShowdown();
-            });
+            const allinBtn = document.getElementById('btn-poker-allin');
+            if (allinBtn) {
+                allinBtn.addEventListener('click', () => {
+                    this.showRiverAndShowdown();
+                });
+            }
         }
     }
 
@@ -198,9 +214,7 @@ class PokerGame {
         if (this.tableEl) {
             this.tableEl.classList.add('table-slam-anim');
         }
-        if (window.soundController) {
-            window.soundController.playTableSlam();
-        }
+        this.safePlaySound('playTableSlam');
 
         // Deal 10 of spades on river
         this.communityCardsEl.innerHTML = `
@@ -238,9 +252,7 @@ class PokerGame {
         }
 
         // Victory fanfare and confetti
-        if (window.soundController) {
-            setTimeout(() => window.soundController.playFanfare(), 300);
-        }
+        setTimeout(() => this.safePlaySound('playFanfare'), 300);
 
         if (window.confetti) {
             window.confetti({
@@ -262,9 +274,7 @@ class PokerGame {
         if (!this.resultModalEl) return;
         this.resultModalEl.classList.add('active');
 
-        if (window.soundController) {
-            window.soundController.playFanfare();
-        }
+        this.safePlaySound('playFanfare');
 
         if (window.confetti) {
             window.confetti({

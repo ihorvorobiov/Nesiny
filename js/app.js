@@ -261,11 +261,14 @@ class AppRouter {
             i.disabled = true;
         });
 
+        const hubIcon = document.getElementById('hub-lock-icon');
+        if (hubIcon) hubIcon.textContent = '🔓';
+
         if (window.soundController) {
             window.soundController.playSafeUnlock();
         }
 
-        this.showToast('✅ Код прийнято! Відкриваємо сейф...');
+        this.showToast('✅ Код 0810 прийнято! Сейф відчиняється...');
 
         // Confetti burst
         if (window.confetti) {
@@ -278,7 +281,7 @@ class AppRouter {
 
         setTimeout(() => {
             this.showScreen('screen-final-reveal');
-        }, 1600);
+        }, 2200);
     }
 
     handleFailedUnlock(safeContainer, inputs, safeErrorMsg) {
