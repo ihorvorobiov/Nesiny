@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>З Днем Народження! ✨ Святковий Квест</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Confetti Library via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+    <!-- Background festive glow backdrop for desktop/tablets -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="ambient-glow glow-3"></div>
+
+    <!-- Main Mobile Container (max-width: 440px) -->
+    <main class="app-container">
+        <!-- Top App Bar -->
+        <header class="app-header">
+            <div class="brand-badge">
+                <span class="sparkle-icon">✨</span>
+                <span class="brand-title">Birthday Quest</span>
+            </div>
+            <div class="header-actions">
+                <button id="btn-sound-toggle" class="btn-icon" aria-label="Звук" title="Вимкнути/Увімкнути звук">🔊</button>
+            </div>
+        </header>
+
+        <!-- SCREEN 1: Sister Welcome (#screen-sister-welcome) -->
+        <section id="screen-sister-welcome" class="app-screen">
+            <div class="festive-balloons-bg">
+                <span class="floating-balloon b-1">🎈</span>
+                <span class="floating-balloon b-2">✨</span>
+                <span class="floating-balloon b-3">🎉</span>
+                <span class="floating-balloon b-4">🎈</span>
+                <span class="floating-balloon b-5">💫</span>
+            </div>
+
+            <div class="card glass-card welcome-card">
+                <div class="hero-avatar">
+                    <span class="avatar-emoji">👑</span>
+                </div>
+                <h1 class="hero-title">З Днем народження, Аля! 🎉</h1>
+                <div class="hero-divider"></div>
+                <p class="hero-text">
+                    Сьогодні твій день! Бажаємо безмежного натхнення, шаленої енергії, легкості у всьому та мільйон приводів для щирої усмішки.
+                </p>
+                <div class="highlight-quote-box">
+                    <span class="quote-icon">🎁</span>
+                    <p>
+                        Головний подарунок уже чекає, але система надійно запакувала його на фініші невеликого святкового забігу!
+                    </p>
+                </div>
+
+                <button id="btn-start-quest" class="btn btn-primary btn-pulsate">
+                    <span>Почати забіг за подарунком 🐴</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: Horse Game Mini-Game (#screen-horse-game) -->
+        <section id="screen-horse-game" class="app-screen">
+            <div class="card glass-card runner-card">
+                <div class="runner-header">
+                    <div class="runner-stat-badge">
+                        <span class="stat-icon">🧲</span>
+                        <span id="runner-horseshoes-count" class="stat-value">0 / 3</span>
+                    </div>
+                    <div class="runner-mission-text">
+                        <span>Збери 3 підкови! 🏇</span>
+                    </div>
+                    <div class="runner-stat-badge timer-badge">
+                        <span class="stat-icon">⏱️</span>
+                        <span id="runner-time-left" class="stat-value">15s</span>
+                    </div>
+                </div>
+
+                <!-- Canvas Game Area -->
+                <div class="canvas-wrapper">
+                    <canvas id="runner-canvas"></canvas>
+                </div>
+
+                <div class="runner-controls-area">
+                    <div class="runner-tip">
+                        <span class="tip-icon">💡</span>
+                        <span>Тапай по екрану або тисни кнопку, щоб підстрибнути! Тортики та коробки не скидають прогрес 🥳</span>
+                    </div>
+                    <button id="btn-runner-jump" class="btn btn-primary btn-jump">
+                        <span>Стрибок! ⬆️</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: Safe Multi-Access Lock (#screen-safe-lock) -->
+        <section id="screen-safe-lock" class="app-screen">
+            <div class="card glass-card safe-card" id="safe-container">
+                <!-- Safe Visual Graphic -->
+                <div class="safe-visual">
+                    <div class="safe-body">
+                        <div class="safe-door">
+                            <div class="safe-dial-wheel">
+                                <div class="safe-dial-knob"></div>
+                                <div class="safe-dial-ticks"></div>
+                            </div>
+                            <div class="safe-handle"></div>
+                            <div class="safe-keyhole">🔒</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Warning Banner -->
+                <div class="security-banner">
+                    <div class="security-header">
+                        <span class="security-icon">🔒</span>
+                        <h2>Доступ обмежено: Спільний протокол!</h2>
+                    </div>
+                    <p class="security-desc">
+                        Помилка активації: подарунок має надто потужний заряд для однієї людини! Система зафіксувала, що два місяці тому святкував свій День народження твій чоловік.
+                    </p>
+                    <p class="security-subdesc">
+                        Другу частину шифру надіслано йому за стіл високих ставок. Передай йому естафету!
+                    </p>
+                </div>
+
+                <!-- 4-digit PIN Code Input -->
+                <div class="pin-entry-container">
+                    <label class="pin-label">Введи 4-значний код деблокування:</label>
+                    <div class="pin-boxes-row">
+                        <input type="tel" maxlength="1" class="pin-input" data-index="0" inputmode="numeric" autocomplete="one-time-code" autofocus>
+                        <input type="tel" maxlength="1" class="pin-input" data-index="1" inputmode="numeric">
+                        <input type="tel" maxlength="1" class="pin-input" data-index="2" inputmode="numeric">
+                        <input type="tel" maxlength="1" class="pin-input" data-index="3" inputmode="numeric">
+                    </div>
+                    <p id="safe-error-msg" class="safe-error-text" style="display: none;"></p>
+                </div>
+
+                <!-- Numeric Keypad for fast touch input -->
+                <div class="pin-keypad">
+                    <div class="keypad-row">
+                        <button class="keypad-btn" data-num="1">1</button>
+                        <button class="keypad-btn" data-num="2">2</button>
+                        <button class="keypad-btn" data-num="3">3</button>
+                    </div>
+                    <div class="keypad-row">
+                        <button class="keypad-btn" data-num="4">4</button>
+                        <button class="keypad-btn" data-num="5">5</button>
+                        <button class="keypad-btn" data-num="6">6</button>
+                    </div>
+                    <div class="keypad-row">
+                        <button class="keypad-btn" data-num="7">7</button>
+                        <button class="keypad-btn" data-num="8">8</button>
+                        <button class="keypad-btn" data-num="9">9</button>
+                    </div>
+                    <div class="keypad-row">
+                        <button class="keypad-btn" id="btn-copy-husband-link" title="Скопіювати лінк">🔗</button>
+                        <button class="keypad-btn" data-num="0">0</button>
+                        <button class="keypad-btn" id="btn-keypad-backspace" title="Видалити">⌫</button>
+                    </div>
+                </div>
+
+                <!-- Copy Link Button for Husband -->
+                <div class="safe-actions">
+                    <button id="btn-copy-link-main" class="btn btn-secondary">
+                        <span>Скопіювати лінк для чоловіка 🔗</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 4: Husband's Flow - Texas Hold'em Poker (#screen-poker-game) -->
+        <section id="screen-poker-game" class="app-screen">
+            <div class="card glass-card poker-card">
+                <!-- Poker Greeting Header -->
+                <div class="poker-greeting">
+                    <div class="poker-title-row">
+                        <span class="poker-chip-icon">♠️</span>
+                        <h2>Діма, ми не забули про твій день також! 🎂♠️</h2>
+                    </div>
+                    <p class="poker-intro-text">
+                        Думав, свято минуло місяць тому? А от і ні, святкова хвиля дісталася до тебе зараз! Дружина-іменинниця щойно подолала свій забіг і застрягла біля сейфа. Твій хід: закрий натсову комбінацію за столом, щоб отримати ключ деблокування.
+                    </p>
+                </div>
+
+                <!-- Green Felt Poker Table -->
+                <div class="poker-table">
+                    <div class="poker-table-felt">
+                        <!-- Table Center / Pot Area -->
+                        <div class="poker-pot-badge">
+                            <span class="pot-label">БАНК:</span>
+                            <span id="poker-pot-value" class="pot-val">2,400 🟡</span>
+                        </div>
+
+                        <!-- Community Board Cards (5 slots) -->
+                        <div class="table-section-title">Карти столу (Board)</div>
+                        <div id="poker-community-cards" class="cards-row community-row">
+                            <!-- Populated dynamically by poker.js -->
+                        </div>
+
+                        <div class="table-divider"></div>
+
+                        <!-- Player's Hole Cards (2 cards) -->
+                        <div class="table-section-title">Твої кишенькові карти (Hole Cards)</div>
+                        <div id="poker-hole-cards" class="cards-row hole-row">
+                            <!-- Populated dynamically by poker.js -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step Info & Status Banner -->
+                <div id="poker-status-text" class="poker-status-box">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Poker Action Button Area -->
+                <div id="poker-action-area" class="poker-action-container">
+                    <!-- Dynamic button: Call Flop -> Turn -> All-In -> Get PIN -->
+                </div>
+            </div>
+
+            <!-- Modal for Husband's PIN Result -->
+            <div id="poker-result-modal" class="modal-backdrop">
+                <div class="modal-card glass-card victory-card">
+                    <div class="modal-confetti-badge">🎉 🏆 🎉</div>
+                    <h2 class="modal-title">НАТС! ROYAL FLUSH!</h2>
+                    <p class="modal-subtitle">Ти зірвав банк і виграв ключ деблокування!</p>
+
+                    <div class="pin-reveal-box">
+                        <span class="pin-reveal-label">Твій секретний PIN-код:</span>
+                        <div class="pin-code-digits">
+                            <span class="pin-digit">0</span>
+                            <span class="pin-digit">8</span>
+                            <span class="pin-digit">1</span>
+                            <span class="pin-digit">0</span>
+                        </div>
+                    </div>
+
+                    <p class="pin-instructions">
+                        Дружина чекає біля свого сейфа. Назви їй цей код, щоб забрати головний спільний приз!
+                    </p>
+
+                    <div class="modal-buttons">
+                        <button id="btn-poker-copy-pin" class="btn btn-primary">
+                            Скопіювати код 📋
+                        </button>
+                        <button id="btn-poker-tg-share" class="btn btn-telegram">
+                            Надіслати в Telegram ✈️
+                        </button>
+                        <button id="btn-poker-to-safe" class="btn btn-secondary">
+                            Перейти до сейфа 🔓
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 5: Finale - Gift Reveal (#screen-final-reveal) -->
+        <section id="screen-final-reveal" class="app-screen">
+            <div class="card glass-card final-card">
+                <div class="final-hero-badge">🥂 🌟 🧖‍♀️🧖‍♂️ 🌟 🥂</div>
+
+                <h1 class="final-main-title">З вашими днями народження! Ви — неймовірна команда! 🥂</h1>
+
+                <div class="final-congrats-text">
+                    <p>
+                        Усі забіги успішно подолано, карти зіграно, банк зірвано!
+                    </p>
+                    <p class="final-subtext">
+                        Робота, побут і дедлайни офіційно ставляться на паузу. Ваш головний обов'язок — видихнути удвох, вимкнути сповіщення й присвятити час повному перезавантаженню тіла й думок.
+                    </p>
+                </div>
+
+                <!-- Premium Golden Voucher Card -->
+                <div class="luxury-voucher-card">
+                    <div class="voucher-shimmer"></div>
+                    <div class="voucher-inner">
+                        <div class="voucher-badge">
+                            <span class="crown-icon">👑</span>
+                            <span>ГОЛОВНИЙ ТРОФЕЙ</span>
+                        </div>
+
+                        <h2 class="voucher-title">
+                            Парний релакс-масаж для вас двох 🧖‍♀️🧖‍♂️
+                        </h2>
+
+                        <div class="voucher-divider"></div>
+
+                        <p class="voucher-description">
+                            Найкращий подарунок для іменинниці – це відпочинок, а найкраща компанія для цього – коханий чоловік, у якого якраз залежався святковий настрій ще з серпня. Ви пройшли цей маленький квест разом, а тепер час зупинити світ і провести годинку в атмосфері тотального спокою та турботи.
+                        </p>
+                        <p class="voucher-note">
+                            З днем народження, Альоно! Ну а Дімі — приємного бонуса до його минулого ДН! 🎉
+                        </p>
+
+                        <!-- Stylized Certificate Code Box -->
+                        <div class="certificate-box">
+                            <span class="cert-label">КОД СЕРТИФІКАТА:</span>
+                            <div class="cert-code-wrapper">
+                                <span id="certificate-code-text" class="cert-code-value">SPA-RELAX-ALYA-DIMA-2024</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="voucher-actions">
+                            <button id="btn-copy-certificate-code" class="btn btn-primary">
+                                Скопіювати код 📋
+                            </button>
+                            <button id="btn-book-relax" class="btn btn-gold">
+                                Забронювати час відпочинку 🌿
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Booking Info Modal -->
+            <div id="booking-modal" class="modal-backdrop">
+                <div class="modal-card glass-card">
+                    <span class="modal-close-icon" id="btn-close-booking-modal">✕</span>
+                    <div class="modal-confetti-badge">🌿 🧖‍♀️🧖‍♂️ 💆‍♂️💆‍♀️</div>
+                    <h2 class="modal-title">Час тотального релаксу</h2>
+                    <p class="modal-subtitle">
+                        Сертифікат готовий до використання! Просто покажіть або продиктуйте код адміністратору при бронюванні сеансу.
+                    </p>
+                    <div class="booking-details-box">
+                        <div class="booking-row">
+                            <span class="b-label">Програма:</span>
+                            <span class="b-val">Парний релакс-масаж</span>
+                        </div>
+                        <div class="booking-row">
+                            <span class="b-label">Для кого:</span>
+                            <span class="b-val">Аля & Діма</span>
+                        </div>
+                        <div class="booking-row">
+                            <span class="b-label">Код:</span>
+                            <span class="b-val gold-val">SPA-RELAX-ALYA-DIMA-2024</span>
+                        </div>
+                    </div>
+                    <p class="booking-cheer">Насолоджуйтеся кожною хвилиною спокою удвох! ❤️</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer quick navigation for easy presentation/testing -->
+        <footer class="app-footer">
+            <div class="footer-role-switch">
+                <span class="switch-title">Навігація квесту:</span>
+                <div class="switch-links">
+                    <a href="#" id="link-switch-sister" class="role-pill">Альона (Аля) 👸</a>
+                    <a href="#" id="link-switch-husband" class="role-pill">Діма ♠️</a>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Floating Toast Notification -->
+    <div id="toast-notification" class="toast-popup"></div>
+
+    <!-- Scripts -->
+    <script src="js/audio.js"></script>
+    <script src="js/runner.js"></script>
+    <script src="js/poker.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
