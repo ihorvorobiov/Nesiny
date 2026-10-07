@@ -1,9 +1,11 @@
 /**
  * Upgraded Festive Horse Runner Mini-Game
- * - 100% Vector Canvas rendering for horse (guaranteed to never disappear)
- * - Jump buffering & air control (100% responsive jumping on all touch screens)
- * - Chill stumble mode (never resets progress)
- * - Sleep animation and safe transition
+ * - 3 Golden Horseshoes spawn randomly spaced across 3 distinct time windows
+ * - Obstacles (cakes & gifts) spawn in between
+ * - If player collects all 3 horseshoes -> Finish flag 🏁, sleepy horse 💤, safe unlocks!
+ * - If player misses any horseshoe -> Retry overlay appears: "Зібрано лише X/3 підков. Спробуй ще раз!", game restarts
+ * - Jump buffering & air control
+ * - 100% Vector Canvas rendering for horse
  */
 
 class HorseRunnerGame {
@@ -24,7 +26,7 @@ class HorseRunnerGame {
 
         // Game parameters
         this.targetHorseshoes = 3;
-        this.targetDuration = 15;
+        this.targetDuration = 24; // 24 seconds total run
         this.elapsedTime = 0;
         this.collectedHorseshoes = 0;
 
@@ -49,6 +51,10 @@ class HorseRunnerGame {
             jumpBufferTimer: 0
         };
 
+        // Distinct random spawn time windows for each of the 3 horseshoes
+        this.horseshoeSpawnTimes = [];
+        this.spawnedHorseshoesCount = 0;
+
         // Entities
         this.obstacles = [];
         this.collectibles = [];
@@ -58,7 +64,7 @@ class HorseRunnerGame {
         // Track & speed
         this.speed = 3.8;
         this.trackOffset = 0;
-        this.lastSpawnTime = 0;
+        this.lastObstacleTime = 0;
         this.lastTime = performance.now();
         this.finishFlag = null;
 
@@ -102,7 +108,6 @@ class HorseRunnerGame {
             this.queueJump();
         };
 
-        // Tap on canvas or anywhere inside the runner card
         this.canvas.addEventListener('pointerdown', triggerJump, { passive: false });
         if (this.container) {
             this.container.addEventListener('pointerdown', (e) => {
@@ -125,6 +130,15 @@ class HorseRunnerGame {
             });
         }
 
+        const retryBtn = document.getElementById('btn-runner-retry');
+        if (retryBtn) {
+            retryBtn.addEventListener('click', () => {
+                const retryModal = document.getElementById('runner-retry-modal');
+                if (retryModal) retryModal.classList.remove('active');
+                this.start();
+            });
+        }
+
         window.addEventListener('resize', () => {
             if (this.isRunning) this.resize();
         });
@@ -133,14 +147,11 @@ class HorseRunnerGame {
     queueJump() {
         if (this.horse.isLayingDown) return;
 
-        // Immediate jump if on ground
         if (!this.horse.isJumping) {
             this.executeJump();
         } else {
-            // Buffer jump if near ground or allow subtle air-boost
             this.horse.jumpBufferTimer = 0.25;
             if (this.horse.vy > 2 && this.horse.y > this.groundY - 50) {
-                // Generous near-ground jump
                 this.executeJump();
             }
         }
@@ -168,6 +179,21 @@ class HorseRunnerGame {
         this.particles = [];
         this.finishFlag = null;
 
+        // Hide retry modal if visible
+        const retryModal = document.getElementById('runner-retry-modal');
+        if (retryModal) retryModal.classList.remove('active');
+
+        // Randomly plan 3 horseshoe spawn moments in separate windows
+        // Window 1: 4.5s - 7.0s
+        // Window 2: 11.0s - 14.5s
+        // Window 3: 18.0s - 21.0s
+        this.horseshoeSpawnTimes = [
+            4.5 + Math.random() * 2.5,
+            11.0 + Math.random() * 3.5,
+            18.0 + Math.random() * 3.0
+        ];
+        this.spawnedHorseshoesCount = 0;
+
         this.horse.y = this.groundY;
         this.horse.vy = 0;
         this.horse.isJumping = false;
@@ -178,7 +204,7 @@ class HorseRunnerGame {
         this.speed = 3.8;
 
         this.lastTime = performance.now();
-        this.lastSpawnTime = 0;
+        this.lastObstacleTime = 0;
 
         this.onUpdateUI({
             horseshoes: this.collectedHorseshoes,
@@ -231,39 +257,64 @@ class HorseRunnerGame {
     spawnEntities() {
         if (this.finishFlag) return;
 
-        // Finish condition check
-        if (this.collectedHorseshoes >= this.targetHorseshoes || this.elapsedTime >= this.targetDuration) {
-            if (!this.finishFlag) {
-                this.finishFlag = {
-                    x: this.width + 60,
-                    reached: false
-                };
-            }
+        const now = this.elapsedTime;
+
+        // Check if it's time for one of the 3 randomly scheduled horseshoes
+        if (this.spawnedHorseshoesCount < 3 && now >= this.horseshoeSpawnTimes[this.spawnedHorseshoesCount]) {
+            this.collectibles.push({
+                x: this.width + 25,
+                y: this.groundY - 32 - (Math.random() > 0.5 ? 20 : 0),
+                type: 'horseshoe',
+                size: 28
+            });
+            this.spawnedHorseshoesCount++;
+            this.lastObstacleTime = now;
             return;
         }
 
-        const now = this.elapsedTime;
-        if (now - this.lastSpawnTime > 1.8) {
-            this.lastSpawnTime = now;
-            const rand = Math.random();
+        // Spawn obstacles periodically, but not on top of horseshoes
+        if (now - this.lastObstacleTime > 2.2 && now < this.targetDuration - 2.5) {
+            this.lastObstacleTime = now;
+            const isCake = Math.random() > 0.5;
+            this.obstacles.push({
+                x: this.width + 25,
+                y: this.groundY - (isCake ? 10 : 8),
+                type: isCake ? 'cake' : 'gift',
+                width: 28,
+                height: 28
+            });
+        }
 
-            if (this.collectedHorseshoes < this.targetHorseshoes && (rand < 0.48 || this.obstacles.length >= 2)) {
-                this.collectibles.push({
-                    x: this.width + 25,
-                    y: this.groundY - 35 - (Math.random() > 0.5 ? 20 : 0),
-                    type: 'horseshoe',
-                    size: 28
-                });
+        // Finish condition: time reached
+        if (now >= this.targetDuration) {
+            if (this.collectedHorseshoes >= this.targetHorseshoes) {
+                // SUCCESS: Spawn finish flag!
+                if (!this.finishFlag) {
+                    this.finishFlag = {
+                        x: this.width + 60,
+                        reached: false
+                    };
+                }
             } else {
-                const isCake = Math.random() > 0.5;
-                this.obstacles.push({
-                    x: this.width + 25,
-                    y: this.groundY - (isCake ? 10 : 8),
-                    type: isCake ? 'cake' : 'gift',
-                    width: 28,
-                    height: 28
-                });
+                // FAILED TO COLLECT 3: Must retry!
+                this.handleMissedRun();
             }
+        }
+    }
+
+    handleMissedRun() {
+        this.stop();
+        if (window.soundController) {
+            window.soundController.playStumble();
+        }
+
+        const retryModal = document.getElementById('runner-retry-modal');
+        const retryCountEl = document.getElementById('retry-horseshoe-count');
+        if (retryCountEl) {
+            retryCountEl.textContent = `${this.collectedHorseshoes} / 3`;
+        }
+        if (retryModal) {
+            retryModal.classList.add('active');
         }
     }
 
@@ -284,7 +335,7 @@ class HorseRunnerGame {
             if (s.alpha > 1 || s.alpha < 0.2) s.twinkleSpeed = -s.twinkleSpeed;
         });
 
-        // Running track offset & leg animation
+        // Track movement
         if (!this.horse.isLayingDown) {
             this.trackOffset = (this.trackOffset + this.speed) % 36;
             this.horse.legAngle += 0.28;
@@ -295,19 +346,17 @@ class HorseRunnerGame {
         if (this.horse.invulnerableTimer > 0) this.horse.invulnerableTimer -= dt;
         if (this.horse.jumpBufferTimer > 0) this.horse.jumpBufferTimer -= dt;
 
-        // Horse jump physics with safety bounds
+        // Horse jump physics
         if (this.horse.isJumping) {
             this.horse.vy += this.horse.gravity;
             this.horse.y += this.horse.vy;
 
-            // Landing check
             if (this.horse.y >= this.groundY) {
                 this.horse.y = this.groundY;
                 this.horse.vy = 0;
                 this.horse.isJumping = false;
                 this.spawnJumpPuff(this.horse.x + 18, this.groundY + 36);
 
-                // Process buffered jump if requested right before landing
                 if (this.horse.jumpBufferTimer > 0) {
                     this.executeJump();
                 }
@@ -317,7 +366,7 @@ class HorseRunnerGame {
             this.horse.vy = 0;
         }
 
-        // Spawn items
+        // Entities
         this.spawnEntities();
 
         // Move obstacles
@@ -325,7 +374,6 @@ class HorseRunnerGame {
             const obs = this.obstacles[i];
             obs.x -= this.speed;
 
-            // Collision check
             if (this.horse.invulnerableTimer <= 0 && !this.horse.isLayingDown) {
                 const horseBox = {
                     x: this.horse.x + 8,
@@ -339,7 +387,6 @@ class HorseRunnerGame {
                     obs.y < horseBox.y + horseBox.h &&
                     obs.y + obs.height > horseBox.y
                 ) {
-                    // Chill stumble: comical bump, sound, invulnerability, continue running!
                     this.horse.stumbleTimer = 0.65;
                     this.horse.invulnerableTimer = 1.2;
                     if (window.soundController) {
@@ -424,7 +471,7 @@ class HorseRunnerGame {
         setTimeout(() => {
             this.stop();
             this.onFinish();
-        }, 2100);
+        }, 2200);
     }
 
     draw() {
@@ -432,15 +479,15 @@ class HorseRunnerGame {
         ctx.save();
         ctx.clearRect(0, 0, this.width, this.height);
 
-        // 1. Festive light gradient sky
+        // 1. Sky gradient
         const skyGrad = ctx.createLinearGradient(0, 0, 0, this.groundY + 20);
-        skyGrad.addColorStop(0, '#EDE9FE'); // Soft lilac-sky
-        skyGrad.addColorStop(0.5, '#FEF3C7'); // Warm champagne
-        skyGrad.addColorStop(1, '#FDE68A'); // Gentle golden horizon
+        skyGrad.addColorStop(0, '#EDE9FE');
+        skyGrad.addColorStop(0.5, '#FEF3C7');
+        skyGrad.addColorStop(1, '#FDE68A');
         ctx.fillStyle = skyGrad;
         ctx.fillRect(0, 0, this.width, this.height);
 
-        // 2. Twinkling golden sparkles
+        // 2. Twinkling sparkles
         this.stars.forEach(s => {
             ctx.fillStyle = `rgba(245, 158, 11, ${Math.max(0.2, s.alpha)})`;
             ctx.beginPath();
@@ -448,7 +495,7 @@ class HorseRunnerGame {
             ctx.fill();
         });
 
-        // 3. Sun / Festive glowing orb
+        // 3. Sun orb
         const sunGrad = ctx.createRadialGradient(this.width - 45, 42, 4, this.width - 45, 42, 28);
         sunGrad.addColorStop(0, '#F59E0B');
         sunGrad.addColorStop(0.6, 'rgba(251, 191, 36, 0.4)');
@@ -458,7 +505,7 @@ class HorseRunnerGame {
         ctx.arc(this.width - 45, 42, 28, 0, Math.PI * 2);
         ctx.fill();
 
-        // 4. Soft background hills
+        // 4. Background hills
         ctx.fillStyle = '#DDD6FE';
         ctx.beginPath();
         ctx.moveTo(0, this.groundY);
@@ -485,7 +532,7 @@ class HorseRunnerGame {
             ctx.stroke();
         }
 
-        // Golden curb line
+        // Golden curb
         ctx.fillStyle = '#F59E0B';
         ctx.fillRect(0, this.groundY + 14, this.width, 3);
 
@@ -498,7 +545,7 @@ class HorseRunnerGame {
             ctx.fillText('🏁', fx - 4, this.groundY - 24);
         }
 
-        // 7. Draw Obstacles (Cakes & Gifts)
+        // 7. Draw Obstacles
         this.obstacles.forEach(obs => {
             if (obs.type === 'cake') {
                 this.drawCake(ctx, obs.x, obs.y);
@@ -512,7 +559,7 @@ class HorseRunnerGame {
             this.drawHorseshoe(ctx, col.x, col.y, col.size);
         });
 
-        // 9. Draw Horse (100% Vector Canvas Art - Guaranteed to never disappear)
+        // 9. Draw Horse
         this.drawVectorHorse(ctx);
 
         // 10. Draw Particles
@@ -526,7 +573,6 @@ class HorseRunnerGame {
         ctx.restore();
     }
 
-    // 100% Canvas Vector Horse Drawing (Independent of OS fonts & emojis)
     drawVectorHorse(ctx) {
         ctx.save();
         ctx.translate(this.horse.x, this.horse.y);
@@ -534,14 +580,12 @@ class HorseRunnerGame {
         if (this.horse.stumbleTimer > 0) {
             ctx.translate(Math.sin(this.elapsedTime * 40) * 3, 0);
             ctx.fillStyle = '#38BDF8';
-            // Sweat drop
             ctx.beginPath();
             ctx.arc(28, -25, 4, 0, Math.PI * 2);
             ctx.fill();
         }
 
         if (this.horse.isLayingDown) {
-            // Sleepy horse curled up on grass
             ctx.translate(0, 18);
 
             // Body
@@ -579,13 +623,11 @@ class HorseRunnerGame {
             ctx.font = 'bold 18px sans-serif';
             ctx.fillText('Z', 54, -20 - zOff);
         } else {
-            // Running or jumping horse
             const jumpTilt = this.horse.isJumping ? (this.horse.vy * 0.035) : 0;
             ctx.rotate(jumpTilt);
 
             const legPhase = Math.sin(this.horse.legAngle);
 
-            // Back legs
             ctx.strokeStyle = '#92400E';
             ctx.lineWidth = 4;
             ctx.lineCap = 'round';
@@ -631,7 +673,7 @@ class HorseRunnerGame {
             ctx.arc(42, -12, 7, 0, Math.PI * 2);
             ctx.fill();
 
-            // Mane (Golden yellow)
+            // Mane
             ctx.fillStyle = '#FBBF24';
             ctx.beginPath();
             ctx.arc(30, -14, 5, 0, Math.PI * 2);
@@ -639,7 +681,7 @@ class HorseRunnerGame {
             ctx.arc(22, -4, 4, 0, Math.PI * 2);
             ctx.fill();
 
-            // Cute Ear
+            // Ear
             ctx.fillStyle = '#92400E';
             ctx.beginPath();
             ctx.moveTo(33, -18);
@@ -665,23 +707,20 @@ class HorseRunnerGame {
             ctx.lineTo(36, -34);
             ctx.closePath();
             ctx.fill();
-            // Hat Pompom
             ctx.fillStyle = '#F59E0B';
             ctx.beginPath();
             ctx.arc(36, -35, 3, 0, Math.PI * 2);
             ctx.fill();
 
-            // Front legs (Front right & Rear right)
+            // Legs right side
             ctx.strokeStyle = '#B45309';
             ctx.lineWidth = 4;
 
-            // Rear right leg
             ctx.beginPath();
             ctx.moveTo(12, 6);
             ctx.lineTo(12 + legPhase * 8, 24);
             ctx.stroke();
 
-            // Front right leg
             ctx.beginPath();
             ctx.moveTo(24, 6);
             ctx.lineTo(24 - legPhase * 8, 24);
@@ -695,23 +734,19 @@ class HorseRunnerGame {
         ctx.save();
         ctx.translate(x, y);
 
-        // Cake base
         ctx.fillStyle = '#F472B6';
         ctx.beginPath();
         ctx.roundRect ? ctx.roundRect(0, 10, 26, 16, 4) : ctx.rect(0, 10, 26, 16);
         ctx.fill();
 
-        // White cream frosting
         ctx.fillStyle = '#FFFFFF';
         ctx.beginPath();
         ctx.roundRect ? ctx.roundRect(-1, 8, 28, 6, 3) : ctx.rect(-1, 8, 28, 6);
         ctx.fill();
 
-        // Candle
         ctx.fillStyle = '#38BDF8';
         ctx.fillRect(11, -1, 4, 10);
 
-        // Flame
         ctx.fillStyle = '#F59E0B';
         ctx.beginPath();
         ctx.arc(13, -3, 3, 0, Math.PI * 2);
@@ -724,18 +759,15 @@ class HorseRunnerGame {
         ctx.save();
         ctx.translate(x, y);
 
-        // Box
         ctx.fillStyle = '#EF4444';
         ctx.beginPath();
         ctx.roundRect ? ctx.roundRect(0, 6, 24, 20, 4) : ctx.rect(0, 6, 24, 20);
         ctx.fill();
 
-        // Golden ribbon
         ctx.fillStyle = '#FBBF24';
         ctx.fillRect(10, 6, 4, 20);
         ctx.fillRect(0, 14, 24, 4);
 
-        // Bow
         ctx.beginPath();
         ctx.arc(9, 4, 4, 0, Math.PI * 2);
         ctx.arc(15, 4, 4, 0, Math.PI * 2);
@@ -748,7 +780,6 @@ class HorseRunnerGame {
         ctx.save();
         ctx.translate(x, y);
 
-        // Golden glow
         const glow = ctx.createRadialGradient(14, 14, 4, 14, 14, 20);
         glow.addColorStop(0, 'rgba(251, 191, 36, 0.85)');
         glow.addColorStop(1, 'transparent');
@@ -757,7 +788,6 @@ class HorseRunnerGame {
         ctx.arc(14, 14, 20, 0, Math.PI * 2);
         ctx.fill();
 
-        // Golden horseshoe arc
         ctx.strokeStyle = '#F59E0B';
         ctx.lineWidth = 5;
         ctx.lineCap = 'round';

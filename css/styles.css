@@ -491,19 +491,39 @@ body {
 }
 
 .safe-dial-wheel {
-    width: 66px;
-    height: 66px;
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #F59E0B, #B45309);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: radial-gradient(circle, #FDE68A 15%, #F59E0B 65%, #B45309 100%);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18), inset 0 2px 4px rgba(255, 255, 255, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2.5px solid #FFFFFF;
+    border: 3px solid #FFFFFF;
+    position: relative;
 }
 
-.safe-keyhole {
-    font-size: 26px;
+.safe-dial-spokes {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 2.5px dashed rgba(255, 255, 255, 0.7);
+    animation: rotateDialIdle 12s linear infinite;
+}
+
+@keyframes rotateDialIdle {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.safe-dial-knob {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFFFFF, #E2E8F0);
+    border: 2px solid #D97706;
+    position: absolute;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .safe-unlocked .safe-visual {
@@ -621,39 +641,11 @@ body {
     margin-top: 6px;
 }
 
-/* Keypad */
-.pin-keypad {
+.safe-actions {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    max-width: 290px;
-    margin: 0 auto 20px;
-}
-
-.keypad-row {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-}
-
-.keypad-btn {
-    flex: 1;
-    height: 52px;
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--text-heading);
-    background: #FFFFFF;
-    border: 1.5px solid #E2E8F0;
-    border-radius: 14px;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-    transition: all 0.15s ease;
-}
-
-.keypad-btn:active {
-    background: var(--gold-soft);
-    border-color: #F59E0B;
-    transform: scale(0.96);
+    gap: 12px;
+    margin-top: 14px;
 }
 
 /* ==========================================================================
@@ -1089,6 +1081,131 @@ body {
     border-radius: 20px;
     border: 1.5px solid rgba(245, 158, 11, 0.35);
     box-shadow: 0 4px 16px rgba(245, 158, 11, 0.08);
+}
+
+/* Luxury SPA Voucher Card */
+.luxury-voucher-card {
+    background: linear-gradient(145deg, #FFFDF9, #FEF3C7);
+    border: 2px solid #F59E0B;
+    border-radius: 24px;
+    padding: 24px 18px;
+    margin-top: 24px;
+    box-shadow: 0 12px 36px rgba(217, 119, 6, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.voucher-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #F59E0B, #B45309);
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    padding: 5px 14px;
+    border-radius: var(--radius-pill);
+    margin-bottom: 12px;
+}
+
+.voucher-title {
+    font-family: var(--font-serif);
+    font-size: 21px;
+    font-weight: 800;
+    color: var(--text-heading);
+    margin-bottom: 16px;
+    line-height: 1.35;
+}
+
+.certificate-box {
+    background: #FFFFFF;
+    border: 2px dashed #F59E0B;
+    border-radius: 16px;
+    padding: 16px 14px;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.cert-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.cert-code-value {
+    font-family: monospace;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-warm);
+    letter-spacing: 1px;
+}
+
+.voucher-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-close-icon {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    font-size: 18px;
+    color: var(--text-muted);
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #F1F5F9;
+}
+
+.booking-details-box {
+    background: #FFFBEB;
+    border: 1.5px solid rgba(245, 158, 11, 0.3);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 18px;
+    text-align: left;
+}
+
+.booking-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    font-size: 14.5px;
+}
+
+.booking-row:last-child {
+    border-bottom: none;
+}
+
+.b-label {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.b-val {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.gold-val {
+    color: var(--text-warm);
+    font-family: monospace;
+}
+
+.booking-cheer {
+    font-size: 15px;
+    color: var(--text-warm);
+    font-weight: 600;
 }
 
 /* Floating Toast Notification */

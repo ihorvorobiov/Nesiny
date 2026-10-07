@@ -92,10 +92,27 @@
                 <div class="runner-controls-area">
                     <div class="runner-tip">
                         <span class="tip-icon">💡</span>
-                        <span>Тапай по екрану або тисни кнопку, щоб підстрибнути! Тортики та коробки не скидають прогрес 🥳</span>
+                        <span>Тапай по екрану або тисни кнопку, щоб стрибнути! Збери 3 золоті підкови 🧲</span>
                     </div>
                     <button id="btn-runner-jump" class="btn btn-primary btn-jump">
                         <span>Стрибок! ⬆️</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Runner Retry Modal if player misses any horseshoe -->
+            <div id="runner-retry-modal" class="modal-backdrop">
+                <div class="modal-card">
+                    <div class="modal-confetti-badge">🏇 ⚠️ 🐴</div>
+                    <h2 class="modal-title">Майже вдалося!</h2>
+                    <p class="modal-subtitle">
+                        Зібрано: <strong id="retry-horseshoe-count" style="color: #D97706; font-size: 18px;">0 / 3</strong> підков 🧲
+                    </p>
+                    <p style="font-size: 15.5px; color: var(--text-secondary); margin-bottom: 22px; line-height: 1.55;">
+                        Для розблокування сейфа потрібно зібрати всі 3 золоті підкови. Спробуй забіг ще раз!
+                    </p>
+                    <button id="btn-runner-retry" class="btn btn-primary">
+                        <span>Спробувати ще раз 🔄</span>
                     </button>
                 </div>
             </div>
@@ -104,16 +121,14 @@
         <!-- SCREEN 3: Safe Multi-Access Lock (#screen-safe-lock) -->
         <section id="screen-safe-lock" class="app-screen">
             <div class="card glass-card safe-card" id="safe-container">
-                <!-- Safe Visual Graphic -->
+                <!-- Safe Visual Graphic (Vault dial, no duplicate lock icon) -->
                 <div class="safe-visual">
                     <div class="safe-body">
                         <div class="safe-door">
                             <div class="safe-dial-wheel">
+                                <div class="safe-dial-spokes"></div>
                                 <div class="safe-dial-knob"></div>
-                                <div class="safe-dial-ticks"></div>
                             </div>
-                            <div class="safe-handle"></div>
-                            <div class="safe-keyhole">🔒</div>
                         </div>
                     </div>
                 </div>
@@ -144,34 +159,13 @@
                     <p id="safe-error-msg" class="safe-error-text" style="display: none;"></p>
                 </div>
 
-                <!-- Numeric Keypad for fast touch input -->
-                <div class="pin-keypad">
-                    <div class="keypad-row">
-                        <button class="keypad-btn" data-num="1">1</button>
-                        <button class="keypad-btn" data-num="2">2</button>
-                        <button class="keypad-btn" data-num="3">3</button>
-                    </div>
-                    <div class="keypad-row">
-                        <button class="keypad-btn" data-num="4">4</button>
-                        <button class="keypad-btn" data-num="5">5</button>
-                        <button class="keypad-btn" data-num="6">6</button>
-                    </div>
-                    <div class="keypad-row">
-                        <button class="keypad-btn" data-num="7">7</button>
-                        <button class="keypad-btn" data-num="8">8</button>
-                        <button class="keypad-btn" data-num="9">9</button>
-                    </div>
-                    <div class="keypad-row">
-                        <button class="keypad-btn" id="btn-copy-husband-link" title="Скопіювати лінк">🔗</button>
-                        <button class="keypad-btn" data-num="0">0</button>
-                        <button class="keypad-btn" id="btn-keypad-backspace" title="Видалити">⌫</button>
-                    </div>
-                </div>
-
-                <!-- Copy Link Button for Husband -->
+                <!-- Action Buttons: Copy link & Share in Telegram -->
                 <div class="safe-actions">
-                    <button id="btn-copy-link-main" class="btn btn-secondary">
-                        <span>Скопіювати лінк для чоловіка 🔗</span>
+                    <button id="btn-copy-husband-link" class="btn btn-primary">
+                        <span id="copy-link-text">Скопіювати лінк для Діми 🔗</span>
+                    </button>
+                    <button id="btn-telegram-share-dima" class="btn btn-telegram">
+                        <span>Поділитися в Telegram ✈️</span>
                     </button>
                 </div>
             </div>
@@ -187,7 +181,7 @@
                         <h2>Діма, ми не забули про твій день також! 🎂♠️</h2>
                     </div>
                     <p class="poker-intro-text">
-                        Думав, свято минуло місяць тому? А от і ні, святкова хвиля дісталася до тебе зараз! Дружина-іменинниця щойно подолала свій забіг і застрягла біля сейфа. Твій хід: закрий натсову комбінацію за столом, щоб отримати ключ деблокування.
+                        Думав, свято минуло два місяці тому? А от і ні, святкова хвиля дісталася до тебе зараз! Дружина-іменинниця щойно подолала свій забіг і застрягла біля сейфа. Твій хід: закрий натсову комбінацію за столом, щоб отримати ключ деблокування.
                     </p>
                 </div>
 
@@ -229,7 +223,7 @@
 
             <!-- Modal for Husband's PIN Result -->
             <div id="poker-result-modal" class="modal-backdrop">
-                <div class="modal-card glass-card victory-card">
+                <div class="modal-card">
                     <div class="modal-confetti-badge">🎉 🏆 🎉</div>
                     <h2 class="modal-title">НАТС! ROYAL FLUSH!</h2>
                     <p class="modal-subtitle">Ти зірвав банк і виграв ключ деблокування!</p>
@@ -276,6 +270,64 @@
                     <p class="final-wish-text secondary-wish">
                         Найкращий подарунок для іменинниці — це відпочинок, а найкраща компанія для цього — коханий чоловік, у якого якраз залежався святковий настрій ще з серпня. Ви пройшли цей маленький квест разом, а тепер час зупинити світ і провести годинку в атмосфері тотального спокою та турботи. Любимо вас!
                     </p>
+                </div>
+
+                <!-- Luxury SPA Voucher Card with Promocode -->
+                <div class="luxury-voucher-card">
+                    <div class="voucher-shimmer"></div>
+                    <div class="voucher-inner">
+                        <div class="voucher-badge">
+                            <span class="crown-icon">👑</span>
+                            <span>ГОЛОВНИЙ ТРОФЕЙ</span>
+                        </div>
+
+                        <h2 class="voucher-title">
+                            Парний релакс-масаж для вас двох 🧖‍♀️🧖‍♂️
+                        </h2>
+
+                        <div class="certificate-box">
+                            <span class="cert-label">ПРОМОКОД ДЛЯ СПА:</span>
+                            <div class="cert-code-wrapper">
+                                <span id="certificate-code-text" class="cert-code-value">SPA-RELAX-ALYA-DIMA-2024</span>
+                            </div>
+                        </div>
+
+                        <div class="voucher-actions">
+                            <button id="btn-copy-certificate-code" class="btn btn-primary">
+                                Скопіювати промокод 📋
+                            </button>
+                            <button id="btn-book-relax" class="btn btn-gold">
+                                Забронювати час відпочинку 🌿
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Booking Info Modal -->
+            <div id="booking-modal" class="modal-backdrop">
+                <div class="modal-card">
+                    <span class="modal-close-icon" id="btn-close-booking-modal">✕</span>
+                    <div class="modal-confetti-badge">🌿 🧖‍♀️🧖‍♂️ 💆‍♂️💆‍♀️</div>
+                    <h2 class="modal-title">Час тотального релаксу</h2>
+                    <p class="modal-subtitle">
+                        Промокод готовий до використання! Просто покажіть або продиктуйте код адміністратору при бронюванні сеансу.
+                    </p>
+                    <div class="booking-details-box">
+                        <div class="booking-row">
+                            <span class="b-label">Програма:</span>
+                            <span class="b-val">Парний релакс-масаж</span>
+                        </div>
+                        <div class="booking-row">
+                            <span class="b-label">Для кого:</span>
+                            <span class="b-val">Аля & Діма</span>
+                        </div>
+                        <div class="booking-row">
+                            <span class="b-label">Промокод:</span>
+                            <span class="b-val gold-val">SPA-RELAX-ALYA-DIMA-2024</span>
+                        </div>
+                    </div>
+                    <p class="booking-cheer">Насолоджуйтеся кожною хвилиною спокою удвох! ❤️</p>
                 </div>
             </div>
         </section>

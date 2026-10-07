@@ -106,13 +106,23 @@ class AppRouter {
 
         // Copy Dima Link button on Safe screen
         const copyHusbandLinkBtn = document.getElementById('btn-copy-husband-link');
-        const copyLinkMainBtn = document.getElementById('btn-copy-link-main');
-        const copyHusbandAction = () => {
+        const copyLinkText = document.getElementById('copy-link-text');
+        const telegramShareDimaBtn = document.getElementById('btn-telegram-share-dima');
+
+        const getHusbandUrl = () => {
             const baseUrl = window.location.href.split('?')[0].split('#')[0];
-            const husbandUrl = `${baseUrl}?player=dima`;
+            return `${baseUrl}?player=dima`;
+        };
+
+        const copyHusbandAction = () => {
+            const husbandUrl = getHusbandUrl();
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(husbandUrl).then(() => {
                     this.showToast('🔗 Посилання для Діми скопійовано! Надішли йому у месенджер');
+                    if (copyLinkText) copyLinkText.textContent = 'Скопіювали лінк для Діми! ✅';
+                    setTimeout(() => {
+                        if (copyLinkText) copyLinkText.textContent = 'Скопіювати лінк для Діми 🔗';
+                    }, 3500);
                 }).catch(() => {
                     window.prompt('Скопіюй це посилання для Діми:', husbandUrl);
                 });
@@ -124,8 +134,14 @@ class AppRouter {
         if (copyHusbandLinkBtn) {
             copyHusbandLinkBtn.addEventListener('click', copyHusbandAction);
         }
-        if (copyLinkMainBtn) {
-            copyLinkMainBtn.addEventListener('click', copyHusbandAction);
+
+        if (telegramShareDimaBtn) {
+            telegramShareDimaBtn.addEventListener('click', () => {
+                const husbandUrl = getHusbandUrl();
+                const msg = encodeURIComponent('Діма, твій хід! Я щойно подолала забіг і застрягла біля сейфа 🔒\nПереходь за посиланням, зірви банк у покері та отримай ключ деблокування! ♠️🏆');
+                const tgUrl = `https://t.me/share/url?url=${encodeURIComponent(husbandUrl)}&text=${msg}`;
+                window.open(tgUrl, '_blank');
+            });
         }
     }
 
@@ -174,35 +190,6 @@ class AppRouter {
                 }
             });
         });
-
-        // Keypad buttons if available
-        const keypadBtns = document.querySelectorAll('.keypad-btn[data-num]');
-        keypadBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const emptyInput = inputs.find(i => !i.value);
-                if (emptyInput) {
-                    emptyInput.value = btn.dataset.num;
-                    if (window.soundController) window.soundController.playPinClick();
-                    const nextIdx = inputs.indexOf(emptyInput) + 1;
-                    if (nextIdx < inputs.length) {
-                        inputs[nextIdx].focus();
-                    }
-                    this.checkPinCompletion(inputs, safeContainer, safeErrorMsg);
-                }
-            });
-        });
-
-        const keypadBackspace = document.getElementById('btn-keypad-backspace');
-        if (keypadBackspace) {
-            keypadBackspace.addEventListener('click', () => {
-                const filledInputs = inputs.filter(i => i.value);
-                if (filledInputs.length > 0) {
-                    const last = filledInputs[filledInputs.length - 1];
-                    last.value = '';
-                    last.focus();
-                }
-            });
-        }
     }
 
     checkPinCompletion(inputs, safeContainer, safeErrorMsg) {
@@ -304,7 +291,38 @@ class AppRouter {
     }
 
     bindFinalScreenActions() {
-        // No extra actions needed on final screen — pure heartfelt celebration
+        const copyCertBtn = document.getElementById('btn-copy-certificate-code');
+        const certCodeEl = document.getElementById('certificate-code-text');
+        const bookBtn = document.getElementById('btn-book-relax');
+        const bookingModal = document.getElementById('booking-modal');
+        const closeBookingBtn = document.getElementById('btn-close-booking-modal');
+
+        if (copyCertBtn && certCodeEl) {
+            copyCertBtn.addEventListener('click', () => {
+                const code = certCodeEl.textContent.trim();
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(code).then(() => {
+                        this.showToast('✨ Промокод скопійовано! 🧖');
+                    }).catch(() => {
+                        this.showToast(`Промокод: ${code}`);
+                    });
+                } else {
+                    window.prompt('Промокод для спа:', code);
+                }
+            });
+        }
+
+        if (bookBtn && bookingModal) {
+            bookBtn.addEventListener('click', () => {
+                bookingModal.classList.add('active');
+            });
+        }
+
+        if (closeBookingBtn && bookingModal) {
+            closeBookingBtn.addEventListener('click', () => {
+                bookingModal.classList.remove('active');
+            });
+        }
     }
 
     showToast(message, duration = 3200) {
