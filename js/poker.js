@@ -110,15 +110,15 @@ class PokerGame {
 
         if (this.statusTextEl) {
             this.statusTextEl.innerHTML = `
-                <span class="badge-tag">Префлоп</span>
-                <p class="status-desc">Рука-монстр: <strong>Туз-Король пік (A♠ K♠)</strong>!</p>
+                <span class="badge-tag">ПРЕФЛОП</span>
+                <p class="status-desc">Кишенькові карти здано: <strong>A♠ K♠</strong> — преміальна рука! Попереду три загальні карти.</p>
             `;
         }
 
         if (this.actionAreaEl) {
             this.actionAreaEl.innerHTML = `
                 <button id="btn-poker-flop" class="btn btn-primary btn-poker-step">
-                    Дивитися Флоп (Call) 👁️
+                    Дивитися Флоп 👁️
                 </button>
             `;
             const flopBtn = document.getElementById('btn-poker-flop');
@@ -149,8 +149,8 @@ class PokerGame {
 
         if (this.statusTextEl) {
             this.statusTextEl.innerHTML = `
-                <span class="badge-tag badge-gold">Флоп</span>
-                <p class="status-desc">Флеш-дро та стріт-дро! Залишилася одна десятка пік до <strong>абсолютного Роял-флешу</strong>!</p>
+                <span class="badge-tag badge-gold">ФЛОП</span>
+                <p class="status-desc"><strong>Q♠ J♠</strong> на столі! Це ж майже легенда: залишилася лише десятка пік до абсолютного Роял-флешу!</p>
             `;
         }
 
@@ -186,15 +186,15 @@ class PokerGame {
 
         if (this.statusTextEl) {
             this.statusTextEl.innerHTML = `
-                <span class="badge-tag badge-amber">Тьорн</span>
-                <p class="status-desc">Інтрига на максимумі. <strong>Час ризикувати!</strong> Опоненти підвищують ставки до небес.</p>
+                <span class="badge-tag badge-amber">ТЬОРН</span>
+                <p class="status-desc"><strong>7♣</strong> нічого не змінює — вся інтрига на останній карті. Ставки максимальні, час іти ва-банк заради Альони!</p>
             `;
         }
 
         if (this.actionAreaEl) {
             this.actionAreaEl.innerHTML = `
                 <button id="btn-poker-allin" class="btn btn-allin btn-poker-step pulsating-allin">
-                    ALL-IN на Рівері 💥
+                    ALL-IN 💥
                 </button>
             `;
             const allinBtn = document.getElementById('btn-poker-allin');
@@ -234,8 +234,8 @@ class PokerGame {
         if (this.statusTextEl) {
             this.statusTextEl.innerHTML = `
                 <div class="royal-flush-banner">
-                    <span class="badge-tag badge-royal">🏆 НАТС! ROYAL FLUSH!</span>
-                    <p class="status-desc victory-glow">10♠ - J♠ - Q♠ - K♠ - A♠ — БАНК ТВІЙ!</p>
+                    <span class="badge-tag badge-royal">РІВЕР</span>
+                    <p class="status-desc victory-glow">Роял-флеш! Це фортуна! Банк повністю твій.</p>
                 </div>
             `;
         }
@@ -243,12 +243,15 @@ class PokerGame {
         if (this.actionAreaEl) {
             this.actionAreaEl.innerHTML = `
                 <button id="btn-poker-get-pin" class="btn btn-gold btn-poker-step pulsating-gold">
-                    Отримати секретний PIN-код 🔑
+                    Забрати секретний PIN-код 🔑
                 </button>
             `;
-            document.getElementById('btn-poker-get-pin').addEventListener('click', () => {
-                this.openResultModal();
-            });
+            const getPinBtn = document.getElementById('btn-poker-get-pin');
+            if (getPinBtn) {
+                getPinBtn.addEventListener('click', () => {
+                    this.openResultModal();
+                });
+            }
         }
 
         // Victory fanfare and confetti
@@ -303,8 +306,9 @@ class PokerGame {
         if (telegramBtn) {
             telegramBtn.addEventListener('click', () => {
                 const baseUrl = window.location.href.split('?')[0].split('#')[0];
-                const message = encodeURIComponent('Аля, я зірвав банк у покері! 🏆\nСекретний PIN-код від сейфа: 0810 🔑\nВводь швидше!');
-                const tgUrl = `https://t.me/share/url?url=${encodeURIComponent(baseUrl)}&text=${message}`;
+                const safeUrl = `${baseUrl}?screen=safe`;
+                const message = encodeURIComponent(`Альона, я забрав банк у покері! 🏆\nТвій секретний PIN-код від сейфа: 0810 🔑\n\nВідкривай свій подарунок тут:\n${safeUrl}`);
+                const tgUrl = `https://t.me/share/url?url=${encodeURIComponent(safeUrl)}&text=${message}`;
                 window.open(tgUrl, '_blank');
             });
         }

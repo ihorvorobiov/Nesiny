@@ -16,16 +16,22 @@ class AppRouter {
         this.bindGlobalEvents();
         this.bindSafePinInputs();
         this.bindFinalScreenActions();
+        this.initSoundCheckModal();
 
-        // Check URL parameter for player role
-        const urlParams = new URLSearchParams(window.location.search);
-        const player = (urlParams.get('player') || '').toLowerCase();
+        // Fallback if modal is not present
+        const soundModal = document.getElementById('sound-check-modal');
+        if (!soundModal) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const player = (urlParams.get('player') || '').toLowerCase();
+            const screenParam = (urlParams.get('screen') || urlParams.get('unlock') || '').toLowerCase();
 
-        if (player === 'husband' || player === 'dima') {
-            this.showScreen('screen-poker-game');
-        } else {
-            // Default: Alona / Sister greeting
-            this.showScreen('screen-sister-welcome');
+            if (player === 'husband' || player === 'dima') {
+                this.showScreen('screen-poker-game');
+            } else if (screenParam === 'safe') {
+                this.showScreen('screen-safe-lock');
+            } else {
+                this.showScreen('screen-sister-welcome');
+            }
         }
     }
 
@@ -97,6 +103,116 @@ class AppRouter {
         this.pokerInstance.init();
     }
 
+    initSoundCheckModal() {
+        const soundModal = document.getElementById('sound-check-modal');
+        const testSlider = document.getElementById('sound-test-slider');
+        const volumeVal = document.getElementById('sound-volume-val');
+        const pingBtn = document.getElementById('btn-sound-test-ping');
+        const allHeardBtn = document.getElementById('btn-sound-all-heard');
+
+        // Check URL parameters for role / direct screen bypass
+        const urlParams = new URLSearchParams(window.location.search);
+        const player = (urlParams.get('player') || '').toLowerCase();
+        const screenParam = (urlParams.get('screen') || urlParams.get('unlock') || '').toLowerCase();
+
+        const isDima = (player === 'husband' || player === 'dima');
+        const isSafe = (screenParam === 'safe');
+
+        // Volume slider update
+        if (testSlider && volumeVal) {
+            testSlider.addEventListener('input', (e) => {
+                const val = e.target.value;
+                volumeVal.textContent = `${val}%`;
+            });
+        }
+
+        // Test chime button
+        if (pingBtn) {
+            pingBtn.addEventListener('click', () => {
+                const volRatio = testSlider ? (parseInt(testSlider.value, 10) / 100) : 0.8;
+                if (window.soundController) {
+                    window.soundController.handleUserGesture();
+                    window.soundController.playTestPing(volRatio);
+                }
+            });
+        }
+
+        // Confirmation button: unlocks audio and enters appropriate flow
+        if (allHeardBtn) {
+            allHeardBtn.addEventListener('click', () => {
+                if (window.soundController) {
+                    window.soundController.handleUserGesture();
+                }
+
+                if (soundModal) {
+                    soundModal.classList.remove('active');
+                }
+
+                if (isDima) {
+                    // Dima's flow starts directly at poker
+                    this.showScreen('screen-poker-game');
+                } else if (isSafe) {
+                    // Direct link to safe bypass
+                    this.showScreen('screen-safe-lock');
+                } else {
+                    // Alona's flow: run pseudo loading animation 0 to 36
+                    this.runPseudoLoader(() => {
+                        this.showScreen('screen-sister-welcome');
+                    });
+                }
+            });
+        }
+    }
+
+    runPseudoLoader(onComplete) {
+        const loader = document.getElementById('pseudo-loader-overlay');
+        const numEl = document.getElementById('pseudo-loader-number');
+        const fillEl = document.getElementById('loader-bar-fill');
+        const hintEl = document.getElementById('loader-status-hint');
+
+        if (!loader) {
+            if (onComplete) onComplete();
+            return;
+        }
+
+        loader.classList.add('active');
+
+        let current = 0;
+        const target = 38;
+        const totalDuration = 1800; // 1.8 seconds
+        const intervalTime = Math.floor(totalDuration / target);
+
+        const hints = [
+            { max: 10, text: 'Підготовка святкового настрою... 🎈' },
+            { max: 20, text: 'Калібрування сюрпризів... ✨' },
+            { max: 32, text: 'Підключення святкової музики... 🎶' },
+            { max: 38, text: 'Святковий протокол активовано! 🎂' }
+        ];
+
+        const timer = setInterval(() => {
+            current++;
+            if (numEl) numEl.textContent = current;
+            if (fillEl) fillEl.style.width = `${Math.round((current / target) * 100)}%`;
+
+            const matchedHint = hints.find(h => current <= h.max);
+            if (matchedHint && hintEl) {
+                hintEl.textContent = matchedHint.text;
+            }
+
+            if (current >= target) {
+                clearInterval(timer);
+                if (window.soundController && typeof window.soundController.playVictory === 'function') {
+                    window.soundController.playVictory();
+                }
+
+                setTimeout(() => {
+                    loader.classList.remove('active');
+                    if (onComplete) onComplete();
+                }, 400);
+            }
+        }, intervalTime);
+    }
+
     bindGlobalEvents() {
         // Start Quest button (Sister Welcome -> Runner)
         const startQuestBtn = document.getElementById('btn-start-quest');
@@ -153,41 +269,13 @@ class AppRouter {
             });
         }
 
-        // Copy Dima Link button on Safe screen
-        const copyHusbandLinkBtn = document.getElementById('btn-copy-husband-link');
-        const copyLinkText = document.getElementById('copy-link-text');
+        // Telegram Share for Alona -> Dima on Safe Screen (Requirements 8 & 9)
         const telegramShareDimaBtn = document.getElementById('btn-telegram-share-dima');
-
-        const getHusbandUrl = () => {
-            const baseUrl = window.location.href.split('?')[0].split('#')[0];
-            return `${baseUrl}?player=dima`;
-        };
-
-        const copyHusbandAction = () => {
-            const husbandUrl = getHusbandUrl();
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(husbandUrl).then(() => {
-                    this.showToast('🔗 Посилання для Діми скопійовано! Надішли йому у месенджер');
-                    if (copyLinkText) copyLinkText.textContent = 'Скопіювали лінк для Діми! ✅';
-                    setTimeout(() => {
-                        if (copyLinkText) copyLinkText.textContent = 'Скопіювати лінк для Діми 🔗';
-                    }, 3500);
-                }).catch(() => {
-                    window.prompt('Скопіюй це посилання для Діми:', husbandUrl);
-                });
-            } else {
-                window.prompt('Скопіюй це посилання для Діми:', husbandUrl);
-            }
-        };
-
-        if (copyHusbandLinkBtn) {
-            copyHusbandLinkBtn.addEventListener('click', copyHusbandAction);
-        }
-
         if (telegramShareDimaBtn) {
             telegramShareDimaBtn.addEventListener('click', () => {
-                const husbandUrl = getHusbandUrl();
-                const msg = encodeURIComponent('Діма, твій хід! Я щойно подолала забіг і застрягла біля сейфа 🔒\nПереходь за посиланням, зірви банк у покері та отримай ключ деблокування! ♠️🏆');
+                const baseUrl = window.location.href.split('?')[0].split('#')[0];
+                const husbandUrl = `${baseUrl}?player=dima`;
+                const msg = encodeURIComponent(`Діма, твій хід! Я щойно пройшла святковий рівень, але доступ до подарунка вимагає командної гри 🔒\nПереходь за посиланням, зірви банк у покері та отримай секретний PIN-код! ♠️🏆\n${husbandUrl}`);
                 const tgUrl = `https://t.me/share/url?url=${encodeURIComponent(husbandUrl)}&text=${msg}`;
                 window.open(tgUrl, '_blank');
             });

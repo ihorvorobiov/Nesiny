@@ -307,16 +307,27 @@ body {
 }
 
 .hero-avatar {
-    width: 86px;
-    height: 86px;
+    width: 90px;
+    height: 90px;
     margin: 0 auto 18px;
     background: linear-gradient(135deg, #FEF3C7, #FDE68A);
-    border: 3px solid #F59E0B;
+    border: 3.5px solid #F59E0B;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.25);
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.28);
+    overflow: hidden;
+    position: relative;
+}
+
+.hero-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 20%;
+    border-radius: 50%;
+    display: block;
 }
 
 .avatar-emoji {
@@ -1401,13 +1412,15 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: linear-gradient(135deg, #F59E0B, #B45309);
-    color: #FFFFFF;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.28);
+    color: var(--text-warm);
     font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 0.8px;
-    padding: 5px 14px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    padding: 4px 12px;
     border-radius: var(--radius-pill);
+    box-shadow: none;
     margin-bottom: 12px;
 }
 
@@ -1562,4 +1575,264 @@ body {
         width: 48px;
         height: 70px;
     }
+}
+
+/* ==========================================================================
+   Sound Check Modal (Requirements 1 & 10)
+   ========================================================================== */
+.sound-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(15, 23, 42, 0.82);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+}
+
+.sound-modal-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.sound-modal-card {
+    background: #FFFFFF;
+    background-image: linear-gradient(160deg, #FFFFFF 0%, #FFFDF9 60%, #FEF7ED 100%);
+    border: 2px solid rgba(245, 158, 11, 0.4);
+    border-radius: 26px;
+    padding: 28px 22px 24px;
+    max-width: 390px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35), 0 0 30px rgba(245, 158, 11, 0.2);
+    transform: scale(0.92);
+    transition: transform 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.sound-modal-backdrop.active .sound-modal-card {
+    transform: scale(1);
+}
+
+.sound-modal-icon-badge {
+    font-size: 32px;
+    margin-bottom: 12px;
+    display: inline-block;
+    filter: drop-shadow(0 4px 10px rgba(245, 158, 11, 0.3));
+}
+
+.sound-modal-title {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--text-heading);
+    margin-bottom: 12px;
+}
+
+.sound-modal-desc {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+}
+
+.sound-test-box {
+    background: #FFFBEB;
+    border: 1.5px solid rgba(245, 158, 11, 0.35);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 22px;
+}
+
+.sound-test-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.sound-test-label {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.sound-volume-percent {
+    font-weight: 800;
+    color: var(--gold-primary);
+    font-family: monospace;
+    font-size: 15px;
+}
+
+.sound-slider {
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    outline: none;
+    background: #FDE68A;
+    -webkit-appearance: none;
+    appearance: none;
+    margin-bottom: 14px;
+    cursor: pointer;
+}
+
+.sound-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #F59E0B, #D97706);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+}
+
+.sound-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #F59E0B, #D97706);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    border: none;
+}
+
+.btn-test-ping {
+    font-size: 14px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: 1.5px solid #FCD34D;
+    background: #FFFFFF;
+    color: var(--text-warm);
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.12);
+}
+
+.btn-test-ping:active {
+    transform: scale(0.98);
+}
+
+.btn-all-heard {
+    font-size: 18px;
+    padding: 16px 20px;
+}
+
+/* ==========================================================================
+   Pseudo Loading Screen 0 to 36 (Requirement 2)
+   ========================================================================== */
+.loader-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #FFFDF9;
+    background-image: var(--bg-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.loader-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.loader-content {
+    max-width: 340px;
+    width: 100%;
+    text-align: center;
+}
+
+.loader-cake-icon {
+    font-size: 40px;
+    margin-bottom: 16px;
+    animation: gentlePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes gentlePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.loader-heading {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin-bottom: 22px;
+}
+
+.loader-counter-wrapper {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 18px;
+}
+
+.loader-counter-num {
+    font-family: var(--font-serif);
+    font-size: 58px;
+    font-weight: 800;
+    color: var(--gold-primary);
+    line-height: 1;
+    text-shadow: 0 4px 18px rgba(245, 158, 11, 0.25);
+}
+
+.loader-counter-max {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.loader-bar-track {
+    width: 100%;
+    height: 10px;
+    background: rgba(245, 158, 11, 0.16);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    margin-bottom: 16px;
+}
+
+.loader-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #F59E0B, #D97706);
+    border-radius: var(--radius-pill);
+    transition: width 0.05s linear;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
+}
+
+.loader-status-hint {
+    font-size: 14.5px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Safe Screen Warning Elements (Requirements 7, 8) */
+.safe-warning-heading {
+    font-family: var(--font-serif);
+    font-size: 21px;
+    font-weight: 700;
+    color: #B45309;
+    text-align: center;
+    margin-bottom: 18px;
+    line-height: 1.3;
+}
+
+.security-mission-text {
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    font-weight: 600;
+    text-align: center;
 }

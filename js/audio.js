@@ -878,6 +878,37 @@ class SoundController {
             } catch (e) {}
         });
     }
+
+    playTestPing(volRatio = 0.8) {
+        this.ensureContext();
+        if (!this.ctx) return;
+        try {
+            if (this.ctx.state === 'suspended') {
+                this.ctx.resume().catch(() => {});
+            }
+            const t = this.ctx.currentTime;
+            const notes = [523.25, 659.25, 783.99, 1046.50];
+            notes.forEach((freq, idx) => {
+                const noteTime = t + idx * 0.07;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, noteTime);
+
+                const gainVal = Math.max(0.05, 0.45 * (volRatio || 0.8));
+                gain.gain.setValueAtTime(0.001, noteTime);
+                gain.gain.linearRampToValueAtTime(gainVal, noteTime + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.0001, noteTime + 0.28);
+
+                osc.connect(gain);
+                gain.connect(this.masterGain);
+
+                osc.start(noteTime);
+                osc.stop(noteTime + 0.28);
+            });
+        } catch (e) {}
+    }
 }
 
 window.soundController = new SoundController();

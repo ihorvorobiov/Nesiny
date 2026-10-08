@@ -19,19 +19,55 @@
     <div class="ambient-glow glow-2"></div>
     <div class="ambient-glow glow-3"></div>
 
+    <!-- MODAL 1: Sound Check & Activation Modal (Requirements 1 & 10) -->
+    <div id="sound-check-modal" class="sound-modal-backdrop active">
+        <div class="sound-modal-card">
+            <div class="sound-modal-icon-badge">🔊 🎵 ✨</div>
+            <h2 class="sound-modal-title">Увімкни звук для повного занурення!</h2>
+            <p class="sound-modal-desc">
+                Квест містить святкову авторську музику та звукові ефекти. Переконайся, що гучність увімкнено (на iPhone обов'язково перемкни важіль беззвучного режиму збоку корпусу!).
+            </p>
+
+            <div class="sound-test-box">
+                <div class="sound-test-row">
+                    <span class="sound-test-label">Рівень гучності:</span>
+                    <span id="sound-volume-val" class="sound-volume-percent">80%</span>
+                </div>
+                <input type="range" id="sound-test-slider" min="0" max="100" value="80" class="sound-slider" aria-label="Гучність">
+                <button type="button" id="btn-sound-test-ping" class="btn btn-secondary btn-test-ping">
+                    <span>▶️ Перевірити звук (Дзвіночок) 🔔</span>
+                </button>
+            </div>
+
+            <button type="button" id="btn-sound-all-heard" class="btn btn-primary btn-pulsate btn-all-heard">
+                <span>Все чую! Почати 🚀</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- OVERLAY 2: Pseudo Loading Overlay (Requirement 2: 0 to 36) -->
+    <div id="pseudo-loader-overlay" class="loader-overlay">
+        <div class="loader-content">
+            <div class="loader-cake-icon">🎂 ✨ 💖</div>
+            <h3 class="loader-heading">Завантаження святкового протоколу...</h3>
+            <div class="loader-counter-wrapper">
+                <span id="pseudo-loader-number" class="loader-counter-num">0</span>
+                <span class="loader-counter-max">/ 38</span>
+            </div>
+            <div class="loader-bar-track">
+                <div id="loader-bar-fill" class="loader-bar-fill" style="width: 0%;"></div>
+            </div>
+            <p id="loader-status-hint" class="loader-status-hint">Підготовка сюрпризу...</p>
+        </div>
+    </div>
+
     <!-- Main Mobile Container (max-width: 440px) -->
     <main class="app-container">
-        <!-- Top App Bar -->
+        <!-- Top App Bar (Header toggle removed per Requirement 4) -->
         <header class="app-header">
             <div class="brand-badge">
                 <span class="sparkle-icon">✨</span>
                 <span class="brand-title">Birthday Quest</span>
-            </div>
-            <div class="header-actions">
-                <button id="btn-sound-toggle" class="btn-sound-pill" aria-label="Музика та звук" title="Вимкнути/Увімкнути музику">
-                    <span id="sound-icon">🎵</span>
-                    <span id="sound-label">Музика: Увімкн.</span>
-                </button>
             </div>
         </header>
 
@@ -47,7 +83,7 @@
 
             <div class="card glass-card welcome-card">
                 <div class="hero-avatar">
-                    <span class="avatar-emoji">👑</span>
+                    <img src="assets/avatar.jpg" alt="Альона" class="hero-avatar-img">
                 </div>
                 <h1 class="hero-title">З Днем народження, Аля! 🎉</h1>
                 <div class="hero-divider"></div>
@@ -64,10 +100,6 @@
                 <div class="welcome-actions">
                     <button id="btn-start-quest" class="btn btn-primary btn-pulsate">
                         <span>Почати забіг за подарунком 🐴</span>
-                    </button>
-                    <button id="btn-music-pill-welcome" class="btn-music-pill-welcome" type="button">
-                        <span class="music-note-icon">🎵</span>
-                        <span id="music-welcome-text">Увімкнути музику: Happy Birthday 🎂</span>
                     </button>
                 </div>
             </div>
@@ -127,6 +159,9 @@
         <!-- SCREEN 3: Safe Multi-Access Lock (#screen-safe-lock) -->
         <section id="screen-safe-lock" class="app-screen">
             <div class="card glass-card safe-card" id="safe-container">
+                <!-- Heading above safe (Requirement 7) -->
+                <h2 class="safe-warning-heading">🔒 Доступ до подарунку обмежено!</h2>
+
                 <!-- Realistic Steel Bank Vault -->
                 <div class="realistic-vault-wrapper">
                     <!-- Left Heavy Steel Hinges -->
@@ -155,9 +190,9 @@
                         <!-- The Heavy Steel Vault Door -->
                         <div class="vault-door" id="vault-door-element">
                             <div class="vault-door-bezel">
-                                <!-- Top Vault Brand Plate -->
+                                <!-- Top Vault Brand Plate (0810 removed per Requirement 6) -->
                                 <div class="vault-plate">
-                                    <span class="plate-brand">TITANIUM VAULT • 0810</span>
+                                    <span class="plate-brand">TITANIUM BANK VAULT</span>
                                     <div class="vault-status-led" id="vault-led"></div>
                                 </div>
 
@@ -190,25 +225,15 @@
                     </div>
                 </div>
 
-                <!-- Security Warning Banner -->
+                <!-- Security Mission Note (Requirement 8) -->
                 <div class="security-banner">
-                    <div class="security-header">
-                        <span class="security-icon">🔒</span>
-                        <h2>Доступ обмежено: Спільний протокол!</h2>
-                    </div>
-                    <p class="security-desc">
-                        Помилка активації: подарунок має надто потужний заряд для однієї людини! Система зафіксувала, що два місяці тому святкував свій День народження твій чоловік.
-                    </p>
-                    <p class="security-subdesc">
-                        Другу частину шифру надіслано йому за стіл високих ставок. Передай йому естафету!
+                    <p class="security-mission-text">
+                        Тут потрібна командна робота: ключ деблокування знаходиться на окремому випробуванні для твого чоловіка. Надішли посилання Дімі — тільки він може відкрити твій сюрприз! 🚀
                     </p>
                 </div>
 
-                <!-- Action Buttons: Copy link & Share in Telegram -->
+                <!-- Action Button: Only Telegram Share per Requirement 9 -->
                 <div class="safe-actions">
-                    <button id="btn-copy-husband-link" class="btn btn-primary">
-                        <span id="copy-link-text">Скопіювати лінк для Діми 🔗</span>
-                    </button>
                     <button id="btn-telegram-share-dima" class="btn btn-telegram">
                         <span>Поділитися в Telegram ✈️</span>
                     </button>
@@ -219,14 +244,14 @@
         <!-- SCREEN 4: Husband's Flow - Texas Hold'em Poker (#screen-poker-game) -->
         <section id="screen-poker-game" class="app-screen">
             <div class="card glass-card poker-card">
-                <!-- Poker Greeting Header -->
+                <!-- Poker Greeting Header (Requirements 11 & 12) -->
                 <div class="poker-greeting">
                     <div class="poker-title-row">
                         <span class="poker-chip-icon">♠️</span>
-                        <h2>Діма, ми не забули про твій день також! 🎂♠️</h2>
+                        <h2>♠️ Діма, місія для головного союзника! 🎂</h2>
                     </div>
                     <p class="poker-intro-text">
-                        Думав, свято минуло два місяці тому? А от і ні, святкова хвиля дісталася до тебе зараз! Дружина-іменинниця щойно подолала свій забіг і застрягла біля сейфа. Твій хід: закрий натсову комбінацію за столом, щоб отримати ключ деблокування.
+                        Сьогодні день народження в Альони! Вона щойно пройшла свій святковий рівень, але доступ до головного подарунка вимагає командної гри — тому вона покликала на допомогу саме тебе. Твоя задача: зіграти роздачу, забрати банк за столом і отримати секретний код розблокування для іменинниці. Покажи клас!
                     </p>
                 </div>
 
@@ -266,12 +291,11 @@
                 </div>
             </div>
 
-            <!-- Modal for Husband's PIN Result -->
+            <!-- Modal for Husband's PIN Result (Requirement 13) -->
             <div id="poker-result-modal" class="modal-backdrop">
                 <div class="modal-card">
                     <div class="modal-confetti-badge">🎉 🏆 🎉</div>
-                    <h2 class="modal-title">НАТС! ROYAL FLUSH!</h2>
-                    <p class="modal-subtitle">Ти зірвав банк і виграв ключ деблокування!</p>
+                    <h2 class="modal-title">🏆 ROYAL FLUSH! БАНК ТВІЙ!</h2>
 
                     <div class="pin-reveal-box">
                         <span class="pin-reveal-label">Твій секретний PIN-код:</span>
@@ -284,18 +308,12 @@
                     </div>
 
                     <p class="pin-instructions">
-                        Дружина чекає біля свого сейфа. Назви їй цей код, щоб забрати головний спільний приз!
+                        Альона чекає на зв'язку. Передай їй ці 4 цифри — їй час нарешті відкрити святковий подарунок!
                     </p>
 
                     <div class="modal-buttons">
-                        <button id="btn-poker-copy-pin" class="btn btn-primary">
-                            Скопіювати код 📋
-                        </button>
                         <button id="btn-poker-tg-share" class="btn btn-telegram">
-                            Надіслати в Telegram ✈️
-                        </button>
-                        <button id="btn-poker-to-safe" class="btn btn-secondary">
-                            Перейти до сейфа 🔓
+                            <span>Надіслати в Telegram ✈️</span>
                         </button>
                     </div>
                 </div>
@@ -307,30 +325,24 @@
             <div class="card glass-card final-card">
                 <div class="final-hero-badge">🥂 ✨ 💖 ✨ 🥂</div>
 
-                <!-- Heartfelt Birthday Wish Text (First!) -->
+                <!-- Heartfelt Birthday Wish Text (Requirement 15) -->
                 <div class="final-wish-card">
                     <p class="final-wish-text primary-wish">
-                        З днем народження, дорога сестричка! Бажаємо тобі безмежного щастя, душевного тепла та легкості в кожному дні.
+                        З днем народження, сестричко! ✨ Бажаємо тобі безмежного натхнення, тепла та легкості щодня.
                     </p>
                     <div class="final-divider"></div>
                     <p class="final-wish-text secondary-wish">
-                        Найкращий подарунок для іменинниці — це відпочинок, а найкраща компанія для цього — коханий чоловік, у якого якраз залежався святковий настрій ще з серпня. Ви пройшли цей маленький квест разом, а тепер час зупинити світ і провести годинку в атмосфері тотального спокою та турботи. Любимо вас!
+                        Головний подарунок для іменинниці — це якісний відпочинок, а найкраща компанія поруч — коханий чоловік, святковий бонус якого якраз дочекався свого часу з серпня! Ви пройшли цей квест як справжня команда. Тепер час поставити буденність на паузу й насолодитися атмосферою тотального релаксу. Дуже любимо вас! ❤️
                     </p>
                 </div>
 
-                <!-- Gift Reveal Intro Badge -->
-                <div class="final-gift-reveal-intro">
-                    <span class="gift-reveal-arrow">🎁</span>
-                    <span class="gift-reveal-heading">Ваш спільний святковий трофей:</span>
-                </div>
-
-                <!-- Luxury SPA Voucher Card with Promocode (Second!) -->
+                <!-- Luxury SPA Voucher Card with Promocode (Requirement 16) -->
                 <div class="luxury-voucher-card">
                     <div class="voucher-shimmer"></div>
                     <div class="voucher-inner">
                         <div class="voucher-badge">
-                            <span class="crown-icon">👑</span>
-                            <span>ГОЛОВНИЙ ТРОФЕЙ РОЗБЛОКОВАНО</span>
+                            <span class="crown-icon">🎁</span>
+                            <span>Головний подарунок розблоковано</span>
                         </div>
 
                         <h2 class="voucher-title">
