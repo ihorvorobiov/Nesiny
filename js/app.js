@@ -269,14 +269,14 @@ class AppRouter {
             });
         }
 
-        // Telegram Share for Alona -> Dima on Safe Screen (Requirements 8 & 9)
+        // Telegram Share for Alona -> Dima on Safe Screen
         const telegramShareDimaBtn = document.getElementById('btn-telegram-share-dima');
         if (telegramShareDimaBtn) {
             telegramShareDimaBtn.addEventListener('click', () => {
                 const baseUrl = window.location.href.split('?')[0].split('#')[0];
                 const husbandUrl = `${baseUrl}?player=dima`;
-                const msg = encodeURIComponent(`Діма, твій хід! Я щойно пройшла святковий рівень, але доступ до подарунка вимагає командної гри 🔒\nПереходь за посиланням, зірви банк у покері та отримай секретний PIN-код! ♠️🏆\n${husbandUrl}`);
-                const tgUrl = `https://t.me/share/url?url=${encodeURIComponent(husbandUrl)}&text=${msg}`;
+                const text = `Діма, твій хід! Я щойно пройшла свій святковий рівень, але для відкриття подарунка потрібна командна робота 🎁\nТвоя місія — здобути секретний PIN-код для розблокування сюрпризу! 🚀`;
+                const tgUrl = `https://t.me/share/url?url=${encodeURIComponent(husbandUrl)}&text=${encodeURIComponent(text)}`;
                 window.open(tgUrl, '_blank');
             });
         }
@@ -433,9 +433,6 @@ class AppRouter {
     bindFinalScreenActions() {
         const copyCertBtn = document.getElementById('btn-copy-certificate-code');
         const certCodeEl = document.getElementById('certificate-code-text');
-        const bookBtn = document.getElementById('btn-book-relax');
-        const bookingModal = document.getElementById('booking-modal');
-        const closeBookingBtn = document.getElementById('btn-close-booking-modal');
 
         if (copyCertBtn && certCodeEl) {
             copyCertBtn.addEventListener('click', () => {
@@ -449,18 +446,6 @@ class AppRouter {
                 } else {
                     window.prompt('Промокод для спа:', code);
                 }
-            });
-        }
-
-        if (bookBtn && bookingModal) {
-            bookBtn.addEventListener('click', () => {
-                bookingModal.classList.add('active');
-            });
-        }
-
-        if (closeBookingBtn && bookingModal) {
-            closeBookingBtn.addEventListener('click', () => {
-                bookingModal.classList.remove('active');
             });
         }
     }

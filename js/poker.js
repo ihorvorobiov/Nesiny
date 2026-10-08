@@ -307,8 +307,8 @@ class PokerGame {
             telegramBtn.addEventListener('click', () => {
                 const baseUrl = window.location.href.split('?')[0].split('#')[0];
                 const safeUrl = `${baseUrl}?screen=safe`;
-                const message = encodeURIComponent(`Альона, я забрав банк у покері! 🏆\nТвій секретний PIN-код від сейфа: 0810 🔑\n\nВідкривай свій подарунок тут:\n${safeUrl}`);
-                const tgUrl = `https://t.me/share/url?url=${encodeURIComponent(safeUrl)}&text=${message}`;
+                const text = `Альона, місію виконано! 🏆\nТвій секретний PIN-код від сейфа: 0810 🔑\n\nВідкривай свій святковий подарунок:`;
+                const tgUrl = `https://t.me/share/url?url=${encodeURIComponent(safeUrl)}&text=${encodeURIComponent(text)}`;
                 window.open(tgUrl, '_blank');
             });
         }
